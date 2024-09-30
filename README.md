@@ -14,9 +14,16 @@ Follow these instructions to set up and run the project using Docker.
 
 ### Clone the Repository
 ```bash
-https://github.com/D33102/Khunlook.git
+git clone https://github.com/D33102/Khunlook.git
 ```
-
+### Go to the directory
+```bash
+cd Khunlook
+```
+### Add Following Files
+- **.env**: a centralized location to store configuration settings for your project.
+- **init.sql**: To initialize the database.
+  
 ### Run this command
 ```bash
 docker-compose up --build
