@@ -24,8 +24,16 @@ cd Khunlook
 - **.env**: a centralized location to store configuration settings for your project.
 - **init.sql**: To initialize the database.
   
-### Run this command
+### Run Docker
 ```bash
 docker-compose up --build
+```
+### Install Dependecies
+```bash
+npm install
+```
+### Run Application
+```bash
+npm run dev
 ```
 
