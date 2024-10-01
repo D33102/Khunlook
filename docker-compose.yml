@@ -1,22 +1,6 @@
 version: "3.8"
 
 services:
-  fastify-app:
-    build: .
-    container_name: fastify-app
-    ports:
-      - "${PORT}:3002"
-    environment:
-      - MYSQL_HOST=${MYSQL_HOST}
-      - MYSQL_DATABASE=${MYSQL_DATABASE}
-    depends_on:
-      - mysql
-    volumes:
-      - .:/app
-      - /app/node_modules
-    networks:
-      - app-network
-
   mysql:
     image: mysql:8.0
     container_name: mysql
