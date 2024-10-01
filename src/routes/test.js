@@ -1,3 +1,5 @@
+import pool from "../database/dbConnection.js";
+
 export function testRoute(fastify, options, done) {
   fastify.get("/", function (request, reply) {
     reply.send({ hello: "world" });
