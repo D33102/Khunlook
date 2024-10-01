@@ -5,7 +5,7 @@ services:
     build: .
     container_name: fastify-app
     ports:
-      - "3002:3002"
+      - "${PORT}:3002"
     environment:
       - MYSQL_HOST=${MYSQL_HOST}
       - MYSQL_DATABASE=${MYSQL_DATABASE}
@@ -21,7 +21,7 @@ services:
     image: mysql:8.0
     container_name: mysql
     ports:
-      - "3307:3306"
+      - "${MYSQL_PORT}:3306"
     environment:
       MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
       MYSQL_DATABASE: ${MYSQL_DATABASE}
