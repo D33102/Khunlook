@@ -1,5 +1,5 @@
 import Fastify from "fastify";
-import pool from "./database/dbConnection.js";
+import { registerDb } from "./plugins/dbConnection.js";
 import dotenv from "dotenv";
 import fastifySwagger from "@fastify/swagger";
 import fastifySwaggerUi from "@fastify/swagger-ui";
@@ -17,7 +17,7 @@ fastify.register(fastifySwagger, swaggerOptions);
 fastify.register(fastifySwaggerUi, swaggerUiOptions);
 
 // Db connection
-fastify.decorate("mysql", pool);
+registerDb(fastify);
 
 // Routes
 fastify.register(testRoute, { prefix: "/" });
