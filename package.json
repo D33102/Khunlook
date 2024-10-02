@@ -12,6 +12,8 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@fastify/swagger": "^9.1.0",
+    "@fastify/swagger-ui": "^5.0.1",
     "dotenv": "^16.4.5",
     "fastify": "^5.0.0",
     "mysql2": "^3.11.3"
