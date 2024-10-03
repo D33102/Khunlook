@@ -28,7 +28,7 @@ cd Khunlook
 ```bash
 docker-compose up --build
 ```
-### Install Dependecies
+### Install Dependencies
 ```bash
 npm install
 ```
