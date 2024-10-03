@@ -22,7 +22,7 @@ registerDb(fastify);
 
 // Routes
 fastify.register(testRoute, { prefix: "/" });
-fastify.register(userRoute, { prefix:"/user" })
+fastify.register(userRoute, { prefix: "/user" })
 
 const start = async () => {
   try {
