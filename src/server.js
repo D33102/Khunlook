@@ -6,6 +6,7 @@ import fastifySwaggerUi from "@fastify/swagger-ui";
 import { testRoute } from "./routes/test.js";
 import { swaggerOptions, swaggerUiOptions } from "./utils/swagger.js";
 import { userRoute } from "./routes/user.js";
+import { authRoute } from "./routes/auth.js";
 
 dotenv.config();
 
@@ -22,7 +23,8 @@ registerDb(fastify);
 
 // Routes
 fastify.register(testRoute, { prefix: "/" });
-fastify.register(userRoute, { prefix: "/user" })
+fastify.register(userRoute, { prefix: "/user" });
+fastify.register(authRoute, { prefix: "/auth" });
 
 const start = async () => {
   try {
