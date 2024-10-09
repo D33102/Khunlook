@@ -1,3 +1,4 @@
+import fastify from "fastify";
 import { loginSchema } from "../models/auth.js";
 export const authController = {
   userLogin: {
@@ -12,11 +13,10 @@ export const authController = {
         if (rows.length === 0) {
           return reply
             .status(401)
-            .send({ message: "Invalid username or password" });
+            .send({ error: "Invalid username or password" });
         }
-        return reply
-          .status(200)
-          .send({ message: "Successfully authenticated" });
+        const token = request.server.jwt.sign({ username: USERNAME });
+        return reply.status(200).send({ token: token });
       } catch (err) {
         request.server.log.error(err);
         return reply.status(500).send({ message: "Internal Server Error" });
