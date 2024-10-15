@@ -1,4 +1,5 @@
 import { authSchema } from "../models/auth.js";
+
 export const authController = {
   userLogin: {
     schema: authSchema.loginSchema,

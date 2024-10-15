@@ -1,4 +1,5 @@
 import { testSchema } from "../models/test.js";
+
 export const testController = {
   testHand: {
     schema: testSchema.testHandSchema,

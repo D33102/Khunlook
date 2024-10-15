@@ -9,6 +9,7 @@ import { authRoute } from "./routes/auth.js";
 import { testRoute } from "./routes/test.js";
 import { userRoute } from "./routes/user.js";
 import { swaggerOptions, swaggerUiOptions } from "./utils/swagger.js";
+import { vaccineRoute } from "./routes/vaccine.js";
 
 dotenv.config();
 
@@ -19,7 +20,7 @@ const fastify = Fastify({
 });
 
 await fastify.register(cors, {
-  origin: "http://localhost:3000", // Allow requests from Next.js app
+  origin: "http://localhost:3001", // Allow requests from Next.js app
   methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
 });
 
@@ -47,6 +48,7 @@ registerDb(fastify);
 fastify.register(testRoute, { prefix: "/" });
 fastify.register(userRoute, { prefix: "/user" });
 fastify.register(authRoute, { prefix: "/auth" });
+fastify.register(vaccineRoute, { prefix: "/vaccine" });
 
 const start = async () => {
   try {
