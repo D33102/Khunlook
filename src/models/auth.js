@@ -14,7 +14,8 @@ export const loginSchema = {
       200: {
         type: "object",
         properties: {
-          token: { type: "string" },
+          accesstoken: { type: "string" },
+          refreshtoken: { type: "string" },
         },
       },
       401: {
