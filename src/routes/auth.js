@@ -1,7 +1,7 @@
-import { authController, refreshController } from "../controllers/auth.js";
+import { authController } from "../controllers/auth.js";
 export function authRoute(fastify, options, done) {
   fastify.post("/", authController.userLogin);
-  fastify.get("/refresh", authController.refreshController);
+  fastify.post("/refresh", authController.refreshToken);
 
   done();
 }
