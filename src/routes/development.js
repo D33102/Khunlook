@@ -26,7 +26,14 @@ export function developmentRoute(fastify, options, done) {
     },
     developmentController.queryConfigDevelopment.handler
   );
-
+  fastify.post(
+    "/save",
+    {
+      preValidation: [fastify.authenticate],
+      schema: developmentController.saveDevelopment.schema,
+    },
+    developmentController.saveDevelopment.handler
+  );
   fastify.post(
     "/typeResult",
     {

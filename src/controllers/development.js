@@ -19,7 +19,7 @@ export const developmentController = {
         },
     },
     getInformationDevelopment: {
-        schema: developmentSchema.saveDevelopmentSchema,
+        schema: developmentSchema.getDevelopmentInformationSchema,
         handler: async (request, reply) =>{
             const {
                 ageMin,
