@@ -1,4 +1,4 @@
-export const loginSchema = {
+export const authSchema = {
   loginSchema: {
     description: "User Login",
     tags: ["Auth"],
@@ -10,14 +10,49 @@ export const loginSchema = {
       },
       required: ["USERNAME", "PASSWORD"],
     },
-    resposne: {
+    response: {
+      // Corrected the key from 'resposne' to 'response'
       200: {
         type: "object",
         properties: {
-          token: { type: "string" },
+          accessToken: { type: "string" },
+          refreshToken: { type: "string" },
         },
       },
       401: {
+        type: "object",
+        properties: {
+          error: { type: "string" },
+        },
+      },
+      500: {
+        type: "object",
+        properties: {
+          message: { type: "string" },
+        },
+        required: ["message"],
+      },
+    },
+  },
+  refreshSchema: {
+    description: "Refresh Token", // Added a description for clarity
+    tags: ["Auth"], // Added tags for consistency
+    body: {
+      type: "object",
+      properties: {
+        refreshToken: { type: "string" },
+      },
+      required: ["refreshToken"],
+    },
+    response: {
+      // Corrected the key from 'resposne' to 'response'
+      200: {
+        type: "object",
+        properties: {
+          accessToken: { type: "string" },
+        },
+      },
+      403: {
         type: "object",
         properties: {
           error: { type: "string" },
