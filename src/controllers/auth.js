@@ -1,5 +1,5 @@
-import fastify from "fastify";
 import { loginSchema } from "../models/auth.js";
+
 export const authController = {
   userLogin: {
     schema: loginSchema.loginSchema,
