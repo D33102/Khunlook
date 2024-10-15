@@ -1,4 +1,5 @@
 import { userSchema } from "../models/user.js";
+import bcrypt from "bcrypt";
 
 export const userController = {
   userRegister: {
@@ -17,9 +18,11 @@ export const userController = {
             .send({ message: "Username or email already exists" });
         }
 
+        const hashedPassword = await bcrypt.hash(PASSWORD, 10);
+
         await request.server.mysql.execute(
           "INSERT INTO USER (`NAME`, `USERNAME`, `PASSWORD`, `EMAIL`) VALUES (?, ?, ?, ?)",
-          [NAME, USERNAME, PASSWORD, EMAIL]
+          [NAME, USERNAME, hashedPassword, EMAIL]
         );
 
         return reply.status(200).send({ message: "successfully registered" });
