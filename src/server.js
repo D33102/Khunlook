@@ -11,6 +11,7 @@ import { userRoute } from "./routes/user.js";
 import { swaggerOptions, swaggerUiOptions } from "./utils/swagger.js";
 import { vaccineRoute } from "./routes/vaccine.js";
 import { developmentRoute } from "./routes/development.js";
+import { growthRoute } from "./routes/growth.js";
 
 dotenv.config();
 
@@ -50,7 +51,8 @@ fastify.register(testRoute, { prefix: "/" });
 fastify.register(userRoute, { prefix: "/user" });
 fastify.register(authRoute, { prefix: "/auth" });
 fastify.register(vaccineRoute, { prefix: "/vaccine" });
-fastify.register(developmentRoute, {prefix: "/development"})
+fastify.register(developmentRoute, { prefix: "/development" });
+fastify.register(growthRoute, { prefix: "/growth" });
 
 const start = async () => {
   try {

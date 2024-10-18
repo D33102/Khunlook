@@ -11,7 +11,6 @@ export const authSchema = {
       required: ["USERNAME", "PASSWORD"],
     },
     response: {
-      // Corrected the key from 'resposne' to 'response'
       200: {
         type: "object",
         properties: {
@@ -35,8 +34,8 @@ export const authSchema = {
     },
   },
   refreshSchema: {
-    description: "Refresh Token", // Added a description for clarity
-    tags: ["Auth"], // Added tags for consistency
+    description: "Refresh Token",
+    tags: ["Auth"],
     body: {
       type: "object",
       properties: {
@@ -45,7 +44,6 @@ export const authSchema = {
       required: ["refreshToken"],
     },
     response: {
-      // Corrected the key from 'resposne' to 'response'
       200: {
         type: "object",
         properties: {
