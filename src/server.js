@@ -39,7 +39,11 @@ fastify.decorate("authenticate", async function (request, reply) {
   try {
     await request.jwtVerify();
   } catch (err) {
-    reply.send(err);
+    return reply.status(401).send({
+      success: false,
+      message: "Unauthorized",
+      error: "Login required",
+    });
   }
 });
 

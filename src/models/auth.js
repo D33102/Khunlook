@@ -14,22 +14,26 @@ export const authSchema = {
       200: {
         type: "object",
         properties: {
-          accessToken: { type: "string" },
-          refreshToken: { type: "string" },
+          success: { type: "boolean" },
+          message: { type: "string" },
+          data: {
+            type: "object",
+            properties: {
+              accessToken: { type: "string" },
+              refreshToken: { type: "string" },
+            },
+          },
         },
+        required: ["success", "message", "data"],
       },
       401: {
         type: "object",
         properties: {
+          success: { type: "boolean" },
+          message: { type: "string" },
           error: { type: "string" },
         },
-      },
-      500: {
-        type: "object",
-        properties: {
-          message: { type: "string" },
-        },
-        required: ["message"],
+        required: ["success", "message", "error"],
       },
     },
   },
@@ -47,21 +51,34 @@ export const authSchema = {
       200: {
         type: "object",
         properties: {
-          accessToken: { type: "string" },
+          success: { type: "boolean" },
+          message: { type: "string" },
+          data: {
+            type: "object",
+            properties: {
+              accessToken: { type: "string" },
+            },
+          },
         },
+        required: ["success", "message", "data"],
       },
-      403: {
+      401: {
         type: "object",
         properties: {
+          success: { type: "boolean" },
+          message: { type: "string" },
           error: { type: "string" },
         },
+        required: ["success", "message", "error"],
       },
       500: {
         type: "object",
         properties: {
+          success: { type: "boolean" },
           message: { type: "string" },
+          error: { type: "string" },
         },
-        required: ["message"],
+        required: ["success", "message", "error"],
       },
     },
   },

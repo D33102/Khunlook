@@ -8,5 +8,13 @@ export function growthRoute(fastify, options, done) {
     },
     growthController.getInformation.handler
   );
+  fastify.post(
+    "/validate",
+    {
+      preValidation: [fastify.authenticate],
+      schema: growthController.growthValidate.schema,
+    },
+    growthController.growthValidate.handler
+  );
   done();
 }
