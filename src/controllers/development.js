@@ -86,7 +86,7 @@ export const developmentController = {
     
                 const [rows] = await request.server.mysql.execute(query, params);
                 rows1 = rows;
-            } else {
+        } else {
                 // Fetch data when ageMax is -1
                 query = `
                 SELECT ASPHYXIA, BWEIGHT, PARAMETER_NAME, PARAMETER_VALUE
@@ -99,14 +99,14 @@ export const developmentController = {
                 ]);
     
                 newbornInfo.forEach((r) => {
-                asphyxia = r.ASPHYXIA || "2";
-                beweight = r.BWEIGHT || 2500;
-                if (r.PARAMETER_NAME === "MAX_ANAMAI55_DEVELOPMENT") {
-                    maxMonth = r.PARAMETER_VALUE;
-                }
-                if (r.PARAMETER_NAME === "MIN_ANAMAI55_DEVELOPMENT") {
-                    minMonth = r.PARAMETER_VALUE;
-                }
+                    asphyxia = r.ASPHYXIA || "2";
+                    beweight = r.BWEIGHT || 2500;
+                    if (r.PARAMETER_NAME === "MAX_ANAMAI55_DEVELOPMENT") {
+                        maxMonth = r.PARAMETER_VALUE;
+                    }
+                    if (r.PARAMETER_NAME === "MIN_ANAMAI55_DEVELOPMENT") {
+                        minMonth = r.PARAMETER_VALUE;
+                    }
                 });
     
 
@@ -124,17 +124,19 @@ export const developmentController = {
                 query = `SELECT 
                     AGE_MONTH_DESCRIPTION,	MIN_AGE_MONTH,MAX_AGE_MONTH,TYPE,'GL_DEVELOPMENT_DSPM' AS TBName,SCREENING,3 FLAGS
                     FROM GL_DEVELOPMENT_DSPM
-                    WHERE MIN_AGE_MONTH > 24 AND MIN_AGE_MONTH >= '$minMonth' AND MAX_AGE_MONTH >= '$maxMonth'
+                    WHERE MIN_AGE_MONTH > 24 AND MIN_AGE_MONTH >= ? AND MAX_AGE_MONTH >= ?
                     ORDER BY FLAGS, MIN_AGE_MONTH,MAX_AGE_MONTH,TYPE `	
+                params = [minMonth, maxMonth]
                 }else{
                 query = `SELECT 
                     AGE_MONTH_DESCRIPTION, MIN_AGE_MONTH, MAX_AGE_MONTH,TYPE, 'GL_DEVELOPMENT_DSPM' AS TBName,SCREENING,2 FLAGS
                     FROM GL_DEVELOPMENT_DSPM
-                    WHERE  MIN_AGE_MONTH >=  '$minMonth' AND MAX_AGE_MONTH >=  '$maxMonth'
+                    WHERE  MIN_AGE_MONTH >= ? AND MAX_AGE_MONTH >= ?
                     ORDER BY FLAGS, MIN_AGE_MONTH,MAX_AGE_MONTH,TYPE`
+                params = [minMonth, maxMonth]
                 }
             }
-            [rows1] = await request.server.mysql.execute(query)
+            rows1 = await request.server.mysql.execute(query,params)
 
             if (loggedin === 1) {
                 if (ageMax != -1) {
