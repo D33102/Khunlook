@@ -89,7 +89,33 @@ export const growthSchema = {
   growthQueryResultSchema: {
     description: "Growth query result",
     tags: ["Growth"],
-    body: {},
+    body: {
+      type: "object",
+      properties: {
+        sex: { type: "number" },
+        typeGraph: { type: "number" },
+        maxFirstGL: { type: "number" },
+        minFirstGL: { type: "number" },
+        maxSecondGL: { type: "number" },
+        minSecondGL: { type: "number" },
+        maxThirdGL: { type: "number" },
+        minThirdGL: { type: "number" },
+        HC_WHO: { type: "number" },
+        HC: { type: "number" },
+      },
+      required: [
+        "sex",
+        "typeGraph",
+        "maxFirstGL",
+        "minFirstGL",
+        "maxSecondGL",
+        "minSecondGL",
+        "maxThirdGL",
+        "minThirdGL",
+        "HC_WHO",
+        "HC",
+      ],
+    },
     response: {
       200: {
         type: "object",

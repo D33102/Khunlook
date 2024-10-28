@@ -16,5 +16,13 @@ export function growthRoute(fastify, options, done) {
     },
     growthController.growthValidate.handler
   );
+  fastify.post(
+    "/query-result",
+    {
+      preValidation: [fastify.authenticate],
+      schema: growthController.growthQueryResult.schema,
+    },
+    growthController.growthQueryResult.handler
+  );
   done();
 }
