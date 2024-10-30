@@ -11,32 +11,35 @@ export const authSchema = {
       required: ["USERNAME", "PASSWORD"],
     },
     response: {
-      // Corrected the key from 'resposne' to 'response'
       200: {
         type: "object",
         properties: {
-          accessToken: { type: "string" },
-          refreshToken: { type: "string" },
+          success: { type: "boolean" },
+          message: { type: "string" },
+          data: {
+            type: "object",
+            properties: {
+              accessToken: { type: "string" },
+              refreshToken: { type: "string" },
+            },
+          },
         },
+        required: ["success", "message", "data"],
       },
       401: {
         type: "object",
         properties: {
+          success: { type: "boolean" },
+          message: { type: "string" },
           error: { type: "string" },
         },
-      },
-      500: {
-        type: "object",
-        properties: {
-          message: { type: "string" },
-        },
-        required: ["message"],
+        required: ["success", "message", "error"],
       },
     },
   },
   refreshSchema: {
-    description: "Refresh Token", // Added a description for clarity
-    tags: ["Auth"], // Added tags for consistency
+    description: "Refresh Token",
+    tags: ["Auth"],
     body: {
       type: "object",
       properties: {
@@ -45,25 +48,37 @@ export const authSchema = {
       required: ["refreshToken"],
     },
     response: {
-      // Corrected the key from 'resposne' to 'response'
       200: {
         type: "object",
         properties: {
-          accessToken: { type: "string" },
+          success: { type: "boolean" },
+          message: { type: "string" },
+          data: {
+            type: "object",
+            properties: {
+              accessToken: { type: "string" },
+            },
+          },
         },
+        required: ["success", "message", "data"],
       },
-      403: {
+      401: {
         type: "object",
         properties: {
+          success: { type: "boolean" },
+          message: { type: "string" },
           error: { type: "string" },
         },
+        required: ["success", "message", "error"],
       },
       500: {
         type: "object",
         properties: {
+          success: { type: "boolean" },
           message: { type: "string" },
+          error: { type: "string" },
         },
-        required: ["message"],
+        required: ["success", "message", "error"],
       },
     },
   },
