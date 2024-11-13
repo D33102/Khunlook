@@ -6,11 +6,11 @@ import dotenv from "dotenv";
 import Fastify from "fastify";
 import { registerDb } from "./plugins/dbConnection.js";
 import { authRoute } from "./routes/auth.js";
-import { testRoute } from "./routes/test.js";
 import { userRoute } from "./routes/user.js";
 import { swaggerOptions, swaggerUiOptions } from "./utils/swagger.js";
 import { vaccineRoute } from "./routes/vaccine.js";
 import { developmentRoute } from "./routes/development.js";
+import { growthRoute } from "./routes/growth.js";
 
 dotenv.config();
 
@@ -38,7 +38,11 @@ fastify.decorate("authenticate", async function (request, reply) {
   try {
     await request.jwtVerify();
   } catch (err) {
-    reply.send(err);
+    return reply.status(401).send({
+      success: false,
+      message: "Unauthorized",
+      error: "Login required",
+    });
   }
 });
 
@@ -46,11 +50,11 @@ fastify.decorate("authenticate", async function (request, reply) {
 registerDb(fastify);
 
 // Routes
-fastify.register(testRoute, { prefix: "/" });
 fastify.register(userRoute, { prefix: "/user" });
 fastify.register(authRoute, { prefix: "/auth" });
 fastify.register(vaccineRoute, { prefix: "/vaccine" });
-fastify.register(developmentRoute, {prefix: "/development"})
+fastify.register(developmentRoute, { prefix: "/development" });
+fastify.register(growthRoute, { prefix: "/growth" });
 
 const start = async () => {
   try {
