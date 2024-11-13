@@ -50,11 +50,16 @@ fastify.decorate("authenticate", async function (request, reply) {
 registerDb(fastify);
 
 // Routes
-fastify.register(userRoute, { prefix: "/user" });
-fastify.register(authRoute, { prefix: "/auth" });
-fastify.register(vaccineRoute, { prefix: "/vaccine" });
-fastify.register(developmentRoute, { prefix: "/development" });
-fastify.register(growthRoute, { prefix: "/growth" });
+fastify.register(
+  async function (apiV1Routes) {
+    apiV1Routes.register(userRoute, { prefix: "/user" });
+    apiV1Routes.register(authRoute, { prefix: "/auth" });
+    apiV1Routes.register(vaccineRoute, { prefix: "/vaccine" });
+    apiV1Routes.register(developmentRoute, { prefix: "/development" });
+    apiV1Routes.register(growthRoute, { prefix: "/growth" });
+  },
+  { prefix: "/api/v1" }
+);
 
 const start = async () => {
   try {
