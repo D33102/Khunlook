@@ -28,7 +28,6 @@ export const developmentController = {
                 childbirth = null,
                 childcorrectedbirth = null,
                 loggedin,
-                previous_chosen = null,
                 tableName = null,
                 childlowbtweigth = null,
             } = request.body;
