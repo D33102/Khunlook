@@ -1,3 +1,4 @@
+import { constraint } from "../utils/parameter";
 export const developmentSchema = {
     deleteDevelopmentSchema: {
       description: "Delete a child's development information",
@@ -5,8 +6,8 @@ export const developmentSchema = {
       body: {
         type: "object",
         properties: {
-          childpid: { type: "string" },
-          devcode: { type: "string" },
+          childpid: constraint.PID,
+          devcode: constraint.DEVELOPMENT,
         },
         required: ["childpid", "devcode"],
       },
@@ -36,15 +37,14 @@ export const developmentSchema = {
       body: {
         type: "object",
         properties: {
-          ageMin: { type: "number" },
-          ageMax: { type: "number" },
-          childpid: { type: "string", nullable: true },
-          childbirth: { type: "string", nullable: true },
-          childcorrectedbirth: { type: "string", nullable: true },
+          ageMin: constraint.AGE,
+          ageMax: constraint.AGE,
+          childpid: constraint.PID,
+          childbirth: constraint.DATE_NULLABLE,
+          childcorrectedbirth: constraint.DATE_NULLABLE,
           loggedin: { type: "boolean" },
-          previous_chosen: { type: "string", nullable: true },
-          tableName: { type: "string", nullable: true },
-          childlowbtweigth: { type: "number", nullable: true },
+          tableName: constraint.TBName_DEVELOPMENT,
+          childlowbtweigth: constraint.WEIGHT_NULLABLE,
         },
         required: ["ageMin", "ageMax", "loggedin"],
       },
@@ -92,8 +92,8 @@ export const developmentSchema = {
       body: {
         type: "object",
         properties: {
-          childpid: { type: "string" },
-          checkAge: { type: "number", default: 0 },
+          childpid: constraint.PID,
+          checkAge: constraint.AGE
         },
         required: ["childpid"],
       },
@@ -137,8 +137,8 @@ export const developmentSchema = {
         body: {
           type: "object",
           properties: {
-            childpid: { type: "string" },
-            checkAge: { type: "number" },
+            childpid: constraint.PID,
+            checkAge: constraint.AGE,
           },
           required: ["childpid"]
         },
@@ -176,11 +176,11 @@ export const developmentSchema = {
       body: {
         type: "object",
         properties: {
-          dateocc: { type: "string", format: "date" },
-          childpid: { type: "string" },
-          childbirth: { type: "string", format: "date" },
-          childcorrectedbirth: { type: "string", format: "date", nullable: true },
-          devcode: { type: "string" },
+          dateocc: constraint.DATE,
+          childpid: constraint.PID,
+          childbirth: constraint.DATE,
+          childcorrectedbirth: constraint.DATE_NULLABLE,
+          devcode: constraint.DEVELOPMENT,
           isUpdate: { type: "number" },
         },
         required: ["dateocc", "childpid", "childbirth", "devcode", "isUpdate"],
@@ -211,6 +211,7 @@ export const developmentSchema = {
       body: {
         type: "object",
         properties: {
+
         },
       },
       response: {
