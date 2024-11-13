@@ -11,7 +11,7 @@ export function developmentRoute(fastify, options, done) {
   );
 
   fastify.post(
-    "/queryChild",
+    "/query-child",
     {
       preValidation: [fastify.authenticate],
       schema: developmentController.queryChildDevelopment.schema,
@@ -19,7 +19,7 @@ export function developmentRoute(fastify, options, done) {
     developmentController.queryChildDevelopment.handler
   );
   fastify.post(
-    "/queryConfig",
+    "/query-config",
     {
       preValidation: [fastify.authenticate],
       schema: developmentController.queryConfigDevelopment.schema,
@@ -35,7 +35,7 @@ export function developmentRoute(fastify, options, done) {
     developmentController.saveDevelopment.handler
   );
   fastify.post(
-    "/typeResult",
+    "/type-result",
     {
       preValidation: [fastify.authenticate],
       schema: developmentController.typeResultDevelopment.schema,
