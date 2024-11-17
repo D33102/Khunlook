@@ -1,6 +1,9 @@
 import { authSchema } from "../models/auth.js";
 import bcrypt from "bcrypt";
 
+const ACCESSTOKENLIFETIME = "1hr";
+const REFRESHTOKENLIFETIME = "12hr";
+
 export const authController = {
   userLogin: {
     schema: authSchema.loginSchema,
@@ -30,13 +33,13 @@ export const authController = {
 
         const accessToken = request.server.jwt.sign(
           { username: USERNAME },
-          { expiresIn: "1hr" } // Access token expires in 1 hour
+          { expiresIn: ACCESSTOKENLIFETIME } // Access token expires in 1 hour
         );
 
         // Generate refresh token
         const refreshToken = request.server.jwt.sign(
           { username: USERNAME },
-          { expiresIn: "12hr" } // Refresh token expires in 12 hours
+          { expiresIn: REFRESHTOKENLIFETIME } // Refresh token expires in 12 hours
         );
 
         return reply.status(200).send({

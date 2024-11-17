@@ -4,7 +4,7 @@ export const constraint = {
   FORM_DATA_DESCRIPTION: () => {
     return " This API has to be sent in form-data.\n \
         The image file can be send by (file) KEY: 'image' and VALUE: image file \n\
-        The example body below has to be sent in separate KEY-VALUE \n \
+        The description body below has to be sent in separate KEY-VALUE \n \
         ex. (text) KEY: 'HID VALUE: 1 \n \
         ps. If want to send null, just don't send that KEY-VALUE pair";
   },
@@ -21,7 +21,7 @@ export const constraint = {
     return {
       type: "string",
       pattern: "^(C|A|L|P|S)[0-9]+$",
-      example: "C200",
+      description: "C200",
     };
   },
 
@@ -32,7 +32,7 @@ export const constraint = {
         "^[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?$",
       //format: 'email',
       maxLength: 254,
-      example: "khunlook@gmail.com",
+      description: "khunlook@gmail.com",
     };
   },
 
@@ -55,7 +55,7 @@ export const constraint = {
       type: "string",
       pattern:
         "^(((19|20)([2468][048]|[13579][26]|0[48])|2000)-02-29|((19|20)[0-9]{2}-(0[469]|11)-(0[1-9]|[12][0-9]|30)|(19|20)[0-9]{2}-(0[13578]|1[02])-(0[1-9]|[12][0-9]|3[01])|(19|20)[0-9]{2}-02-(0[1-9]|1[0-9]|2[0-8])))$",
-      example: "2021-12-31",
+      description: "2021-12-31",
     };
   },
 
@@ -65,7 +65,7 @@ export const constraint = {
       pattern:
         "^(((19|20)([2468][048]|[13579][26]|0[48])|2000)-02-29|((19|20)[0-9]{2}-(0[469]|11)-(0[1-9]|[12][0-9]|30)|(19|20)[0-9]{2}-(0[13578]|1[02])-(0[1-9]|[12][0-9]|3[01])|(19|20)[0-9]{2}-02-(0[1-9]|1[0-9]|2[0-8])))$",
       nullable: true,
-      example: "2021-12-31",
+      description: "2021-12-31",
     };
   },
 
@@ -74,7 +74,7 @@ export const constraint = {
       type: "string",
       pattern:
         "^(?<hour>2[0-3]|[01][0-9]):?(?<minute>[0-5][0-9]):?(?<second>[0-5][0-9])$",
-      example: "20:20:20",
+      description: "20:20:20",
     };
   },
 
@@ -83,7 +83,7 @@ export const constraint = {
       type: "string",
       pattern:
         "^(((19|20)([2468][048]|[13579][26]|0[48])|2000)-02-29|((19|20)[0-9]{2}-(0[469]|11)-(0[1-9]|[12][0-9]|30)|(19|20)[0-9]{2}-(0[13578]|1[02])-(0[1-9]|[12][0-9]|3[01])|(19|20)[0-9]{2}-02-(0[1-9]|1[0-9]|2[0-8])))[ ](?<hour>2[0-3]|[01][0-9]):?(?<minute>[0-5][0-9]):?(?<second>[0-5][0-9])$",
-      example: "2021-01-01 20:20:20",
+      description: "2021-01-01 20:20:20",
     };
   },
 
@@ -91,7 +91,7 @@ export const constraint = {
     return {
       type: "integer",
       minimum: 0,
-      example: "12",
+      description: "12",
     };
   },
 
@@ -101,7 +101,7 @@ export const constraint = {
       minimum: 0,
       maximum: 150,
       allowEmptyValue: true, //for swagger, to send null params
-      example: 49.0,
+      description: 49.0,
     };
   },
 
@@ -110,7 +110,7 @@ export const constraint = {
       type: "number",
       minimum: 0,
       maximum: 150,
-      example: 49.0,
+      description: "49.0",
     };
   },
 
@@ -120,7 +120,7 @@ export const constraint = {
       minimum: 0,
       maximum: 200,
       allowEmptyValue: true, //for swagger, to send null params
-      example: 165.8,
+      description: "165.8",
     };
   },
 
@@ -129,7 +129,7 @@ export const constraint = {
       type: "number",
       minimum: 0,
       maximum: 200,
-      example: 165.8,
+      description: "165.8",
     };
   },
 
@@ -139,7 +139,7 @@ export const constraint = {
       minimum: 0,
       maximum: 70,
       allowEmptyValue: true, //for swagger, to send null params
-      example: 40.2,
+      description: "40.2",
     };
   },
 
@@ -148,7 +148,7 @@ export const constraint = {
       type: "number",
       minimum: 0,
       maximum: 70,
-      example: 40.2,
+      description: "40.2",
     };
   },
 
@@ -164,7 +164,7 @@ export const constraint = {
   AGE_MONTH_DESCRIPTION: () => {
     return {
       type: "string",
-      example: "37 - 41 เดือน",
+      description: "37 - 41 เดือน",
     };
   },
 
@@ -225,14 +225,14 @@ export const constraint = {
   CATEGORY_CONSENT: () => {
     return {
       type: "string",
-      example: "การสำรองข้อมูล",
+      description: "การสำรองข้อมูล",
     };
   },
 
   INFORMATION_CONSENT: () => {
     return {
       type: "string",
-      example: "ให้สำรองข้อมูลในระบบคลาวด์ KhunLook เพื่อป้องกันการสูญหาย",
+      description: "ให้สำรองข้อมูลในระบบคลาวด์ KhunLook เพื่อป้องกันการสูญหาย",
     };
   },
 
@@ -241,7 +241,7 @@ export const constraint = {
     return {
       type: "string",
       pattern: "^((?:[1-9])?|(?:[1][0-6])?)(L|R)$",
-      example: "7R",
+      description: "7R",
     };
   },
 
@@ -258,7 +258,7 @@ export const constraint = {
       type: "string",
       pattern:
         "^DSPM([1-9]|[1-9][0-9]|[1][0-3][0-9])$|^DAIM([1-9]|[1-6][0-9]|[7][0])$|^(?<ANAMAI55>[1-9]|[1-6][0-9]|[7][0-5])$|^TEDA([1-9]|[1-9][0-9]|[1][0-4][0-9])$",
-      example: "DSPM14",
+      description: "DSPM14",
     };
   },
 
@@ -286,14 +286,14 @@ export const constraint = {
   DESCRIPTION_DEVELOPMENT: () => {
     return {
       type: "string",
-      example: "ทำตามกฎในการเล่นเป็นกลุ่มได้โดยมีผู้ใหญ่แนะนำ (PS)",
+      description: "ทำตามกฎในการเล่นเป็นกลุ่มได้โดยมีผู้ใหญ่แนะนำ (PS)",
     };
   },
 
   INFORMATION_DEVELOPMENT: () => {
     return {
       type: "string",
-      example:
+      description:
         "ชวนให้เด็กทำงานบ้านด้วยกัน เช่น เก็บของเล่น ล้างจาน กวาดบ้าน ช่วยเก็บเสื้อผ้า หยิบของ ถ้าเด็กทำไม่ได้ ฝึกทุกครั้งที่มีโอกาส เพื่อให้เด็กทำงานบ้านง่ายๆ ได้\\n\\nถ้าเด็กยังทำไม่ได้ ลองฝึกบ่อยๆ ทุกวัน หากผ่านช่วงอายุที่น่าจะทำได้มา 1 เดือน แล้วยังทำไม่ได้ ควรพาไปพบแพทย์หรือบุคลากรสาธารณสุข",
     };
   },
@@ -301,7 +301,7 @@ export const constraint = {
   TYPE_DESCRIPTION_DEVELOPMENT: () => {
     return {
       type: "string",
-      example: "การเคลื่อนไหว",
+      description: "การเคลื่อนไหว",
     };
   },
 
@@ -328,7 +328,7 @@ export const constraint = {
   VIDEOID: () => {
     return {
       type: "string",
-      example: "zQoxjVrpbk0",
+      description: "zQoxjVrpbk0",
     };
   },
 
@@ -343,7 +343,7 @@ export const constraint = {
     return {
       type: "string",
       pattern: "^[0-9]+$",
-      example: "2",
+      description: "2",
     };
   },
 
@@ -357,7 +357,7 @@ export const constraint = {
   PROVINCE: () => {
     return {
       type: "string",
-      example: "ลพบุรี",
+      description: "ลพบุรี",
     };
   },
 
@@ -373,21 +373,21 @@ export const constraint = {
   MOVEMENT_MEANING: () => {
     return {
       type: "string",
-      example: "มากกว่า 10 ครั้ง",
+      description: "มากกว่า 10 ครั้ง",
     };
   },
 
   MOVEMENT_SUMMARY_MEANING: () => {
     return {
       type: "string",
-      example: "ลูกดิ้นปกติ พรุ่งนี้มานับกันอีกนะครับ",
+      description: "ลูกดิ้นปกติ พรุ่งนี้มานับกันอีกนะครับ",
     };
   },
 
   INFORMATION_FETAL_MOVEMEMT: () => {
     return {
       type: "string",
-      example:
+      description:
         "การนับลูกดิ้นเป็นการบ่งบอกถึงสุขภาพลูกในครรภ์ด้วยครับ คุณแม่ควรนับจำนวนครั้งที่ลูกดิ้นทุกวัน โดยดูว่าตั้งแต่คุณแม่ตื่นนอนจนถึงเที่ยงลูกดิ้นกี่ครั้ง",
     };
   },
@@ -395,7 +395,7 @@ export const constraint = {
   DESCRIPTION_FETAL_MOVEMEMT: () => {
     return {
       type: "string",
-      example:
+      description:
         "ลูกควรดิ้นมากกว่า 10 ครั้งครับ  ถือว่าปกติ พรุ่งนี้มานับกันอีกนะครับ",
     };
   },
@@ -415,7 +415,7 @@ export const constraint = {
       type: "string",
       pattern: "^[1-4]{1}$",
       nullable: true,
-      example: "2",
+      description: "2",
     };
   },
 
@@ -424,7 +424,7 @@ export const constraint = {
       type: "string",
       pattern: "^[1-3]{1}$",
       nullable: true,
-      example: "1",
+      description: "1",
     };
   },
 
@@ -434,7 +434,7 @@ export const constraint = {
       pattern:
         "^(?<hour>2[0-3]|[01][0-9])?(?<minute>[0-5][0-9])?(?<second>[0-5][0-9])$",
       nullable: true,
-      example: "235959",
+      description: "235959",
     };
   },
 
@@ -444,7 +444,7 @@ export const constraint = {
       pattern: "^[A-Za-z0-9._]+$",
       minLength: 1,
       maxLength: 2083,
-      example: "0_C13.png",
+      description: "0_C13.png",
     };
   },
 
@@ -454,7 +454,7 @@ export const constraint = {
       pattern: "^[A-Za-z0-9._]+$",
       minLength: 1,
       maxLength: 2083,
-      example: "0_C13.png",
+      description: "0_C13.png",
       nullable: true,
     };
   },
@@ -510,7 +510,7 @@ export const constraint = {
     return {
       type: "string",
       pattern: "^[0-9]{1,2}$",
-      example: "2",
+      description: "2",
     };
   },
 
@@ -522,7 +522,7 @@ export const constraint = {
         "GL_GROWTH_CHILD_WEIGHT_LENGTH_WHO",
         "GL_GROWTH_CHILD_WEIGHT_HEIGHT_WHO",
       ],
-      example: "GL_GROWTH_CHILD_WEIGHT_LENGTH_WHO",
+      description: "GL_GROWTH_CHILD_WEIGHT_LENGTH_WHO",
     };
   },
 
@@ -542,7 +542,7 @@ export const constraint = {
   RESULT_GROWTH: () => {
     return {
       type: "string",
-      example: "ไม่ทราบส่วนสูงล่าสุด ไม่สามารถคำนวณดัชนีมวลกายได้",
+      description: "ไม่ทราบส่วนสูงล่าสุด ไม่สามารถคำนวณดัชนีมวลกายได้",
     };
   },
 
@@ -567,7 +567,7 @@ export const constraint = {
     return {
       type: "string",
       pattern: "^[A-Z0-9]{3}$",
-      example: "H12",
+      description: "H12",
     };
   },
 
@@ -582,7 +582,7 @@ export const constraint = {
     return {
       type: "string",
       pattern: "^[A-Z0-9]{5}$",
-      example: "AP752",
+      description: "AP752",
     };
   },
 
@@ -590,7 +590,7 @@ export const constraint = {
     return {
       type: "string",
       pattern: "^[A-Z0-9]{5}$",
-      example: "AP752",
+      description: "AP752",
       nullable: true,
     };
   },
@@ -601,7 +601,7 @@ export const constraint = {
       //pattern: no_special,
       minLength: 1,
       maxLength: 255,
-      example: "โรงพยาบาลวชิระภูเก็ต สาขา หยี่เต้ง VACHIRA EXPRESS",
+      description: "โรงพยาบาลวชิระภูเก็ต สาขา หยี่เต้ง VACHIRA EXPRESS",
     };
   },
 
@@ -609,7 +609,7 @@ export const constraint = {
     return {
       type: "string",
       maxLength: 150,
-      example: "JE2: Lived attenuated",
+      description: "JE2: Lived attenuated",
     };
   },
 
@@ -617,7 +617,7 @@ export const constraint = {
     return {
       type: "string",
       maxLength: 125,
-      example: "คอตีบ,ไอกรน,บาดทะยัก",
+      description: "คอตีบ,ไอกรน,บาดทะยัก",
     };
   },
 
@@ -629,7 +629,7 @@ export const constraint = {
   GRP_NAME: () => {
     return {
       type: "string",
-      example: "Hib",
+      description: "Hib",
     };
   },
 
@@ -646,21 +646,21 @@ export const constraint = {
       type: "number",
       minimum: 0,
       maximum: 999,
-      example: 59.0,
+      description: 59.0,
     };
   },
 
   BMI: () => {
     return {
       type: "integer",
-      example: 18.5,
+      description: 18.5,
     };
   },
 
   RESULT_ANC: () => {
     return {
       type: "string",
-      example: "น้ำหนักปกติ",
+      description: "น้ำหนักปกติ",
     };
   },
 
@@ -675,7 +675,7 @@ export const constraint = {
   INFORMATION_GA: () => {
     return {
       type: "string",
-      example: "ตอนนี้ลูกมีขนาดประมาณเมล็ดอัลมอนด์ค่ะ",
+      description: "ตอนนี้ลูกมีขนาดประมาณเมล็ดอัลมอนด์ค่ะ",
     };
   },
 
@@ -689,21 +689,21 @@ export const constraint = {
   DESCRIPTION_GA: () => {
     return {
       type: "string",
-      example: "หญิงตั้งครรภ์ควรตรวจคัดกรองมะเร็งปากมดลูกหรือไม่?",
+      description: "หญิงตั้งครรภ์ควรตรวจคัดกรองมะเร็งปากมดลูกหรือไม่?",
     };
   },
 
   ROUTE: () => {
     return {
       type: "string",
-      example: "WEIGHT",
+      description: "WEIGHT",
     };
   },
 
   BUTTON: () => {
     return {
       type: "string",
-      example: "บันทึกผล",
+      description: "บันทึกผล",
     };
   },
 
@@ -718,28 +718,28 @@ export const constraint = {
   CATEGORY: () => {
     return {
       type: "string",
-      example: "FOOD_FOR_MOM",
+      description: "FOOD_FOR_MOM",
     };
   },
 
   CATEGORY_TH: () => {
     return {
       type: "string",
-      example: "อาหารสำหรับคุณแม่",
+      description: "อาหารสำหรับคุณแม่",
     };
   },
 
   QUESTION: () => {
     return {
       type: "string",
-      example: "41",
+      description: "41",
     };
   },
 
   RESULT_GA: () => {
     return {
       type: "string",
-      example: "ถูกต้องแล้วครับ การดื่มน้ำมากขึ้น ช่วยได้ครับ",
+      description: "ถูกต้องแล้วครับ การดื่มน้ำมากขึ้น ช่วยได้ครับ",
     };
   },
 
@@ -761,7 +761,7 @@ export const constraint = {
     return {
       type: "string",
       pattern: "^[A-Z0-9]{2,3}$",
-      example: "H12",
+      description: "H12",
     };
   },
 

@@ -57,6 +57,7 @@ export const authSchema = {
             type: "object",
             properties: {
               accessToken: { type: "string" },
+              accessTokenExpiredIn: { type: "integer" },
             },
           },
         },

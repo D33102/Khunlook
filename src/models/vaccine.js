@@ -1,4 +1,4 @@
-import { constraint } from "../utils/parameter";
+import { constraint } from "../utils/parameter.js";
 export const vaccineSchema = {
   vaccineInformation: {
     description: "Vaccine",
@@ -7,8 +7,8 @@ export const vaccineSchema = {
       type: "object",
       required: ["childpid", "isinplan", "loggedin"],
       properties: {
-        childpid: constraint.PID,
-        isinplan: constraint.IN_PLAN,
+        childpid: constraint.PID(),
+        isinplan: constraint.IN_PLAN(),
         loggedin: { type: "integer" },
         previous_chosen: { type: "string", nullable: true },
       },
@@ -24,15 +24,15 @@ export const vaccineSchema = {
               type: "object",
               properties: {
                 CODE: { type: "string" },
-                DESCRIPTION: constraint.DESCRIPTION,
+                DESCRIPTION: constraint.DESCRIPTION(),
                 DESCRIPTION_TH: { type: "string" },
                 DESCRIPTION_TABLE: { type: "string" },
-                AGE: constraint.AGE,
-                AGE_MAX: constraint.AGE,
-                DISEASE: constraint.DISEASE,
-                GRP_NAME: constraint.GRP_NAME,
-                IN_PLAN: constraint.IN_PLAN,
-                INFORMATION: constraint.INFORMATION,
+                AGE: constraint.AGE(),
+                AGE_MAX: constraint.AGE(),
+                DISEASE: constraint.DISEASE(),
+                GRP_NAME: constraint.GRP_NAME(),
+                IN_PLAN: constraint.IN_PLAN(),
+                INFORMATION: constraint.INFORMATION(),
                 WEB_GRP_NAME: { type: "string" },
                 WEB_GRP_ORDER: { type: "integer" },
               },
@@ -57,20 +57,20 @@ export const vaccineSchema = {
             items: {
               type: "object",
               properties: {
-                DESCRIPTION: constraint.DESCRIPTION,
+                DESCRIPTION: constraint.DESCRIPTION(),
                 DESCRIPTION_TH: { type: "string" },
                 DESCRIPTION_TABLE: { type: "string" },
-                IN_PLAN: constraint.IN_PLAN,
-                VACCINETYPE: constraint.VACCINETYPE,
+                IN_PLAN: constraint.IN_PLAN(),
+                VACCINETYPE: constraint.VACCINETYPE(),
                 DATE_SERV: { type: "string", format: "date" },
                 CODE: { type: "string" },
                 WEB_GRP_NAME: { type: "string" },
                 WEB_GRP_ORDER: { type: "integer" },
-                GRP_NAME: constraint.GRP_NAME,
-                AGE: constraint.AGE,
-                AGE_MAX: constraint.AGE,
-                HOSPITAL: constraint.HOSPITAL,
-                HOSPITALCODE: constraint.HOSPCODE,
+                GRP_NAME: constraint.GRP_NAME(),
+                AGE: constraint.AGE(),
+                AGE_MAX: constraint.AGE(),
+                HOSPITAL: constraint.HOSPITAL(),
+                HOSPITALCODE: constraint.HOSPCODE(),
                 AGE_MONTH: { type: "integer" },
               },
               required: [
@@ -105,8 +105,8 @@ export const vaccineSchema = {
       type: "object",
       properties: {
         vaccineplace: { type: "string" },
-        childpid: constraint.PID,
-        vaccinetype: constraint.VACCINETYPE,
+        childpid: constraint.PID(),
+        vaccinetype: constraint.VACCINETYPE(),
         vaccinated_date: { type: "string", format: "date" },
         months: { type: "string", nullable: true },
       },
@@ -168,8 +168,8 @@ export const vaccineSchema = {
     body: {
       type: "object",
       properties: {
-        childpid: constraint.PID,
-        vaccinetype: constraint.VACCINETYPE_GA,
+        childpid: constraint.PID(),
+        vaccinetype: constraint.VACCINETYPE_GA(),
         months: { type: "integer" },
         dateserv: { type: "string" },
       },
@@ -198,8 +198,8 @@ export const vaccineSchema = {
       ],
       properties: {
         vaccineplace: { type: "string", nullable: true },
-        childpid: constraint.PID,
-        vaccinetype: constraint.VACCINETYPE,
+        childpid: constraint.PID(),
+        vaccinetype: constraint.VACCINETYPE(),
         vaccinated_date: {
           type: "string",
           description: "Updated vaccination date (DD-MM-YYYY)",

@@ -5,7 +5,7 @@ export const growthController = {
     schema: growthSchema.getInformationSchema,
     handler: async (request, reply) => {
       try {
-        const { childpid = null, previous_chosen = null } = request.body;
+        const { childpid, previous_chosen } = request.body;
         const query = `SELECT NUTRITION.ID, NUTRITION.DATE_SERV, NUTRITION.WEIGHT, NUTRITION.HEIGHT, 
         NUTRITION.HEADCIRCUM, PERSON.SEX, PERSON.BIRTH, 
         (timestampdiff(DAY, PERSON.BIRTH, NUTRITION.DATE_SERV)) AS AGEDAY, 
