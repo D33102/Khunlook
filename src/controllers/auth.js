@@ -11,7 +11,7 @@ export const authController = {
       try {
         const { USERNAME, PASSWORD } = request.body;
         const [rows] = await request.server.mysql.execute(
-          "SELECT * FROM USER WHERE `USERNAME` = ?",
+          "SELECT * FROM `USER` WHERE `USERNAME` = ?",
           [USERNAME]
         );
         if (rows.length === 0) {
@@ -21,8 +21,9 @@ export const authController = {
             error: "Invalid username or password",
           });
         }
+
         const user = rows[0];
-        const isPasswordValid = await bcrypt.compare(PASSWORD, user.PASSWORD);
+        const isPasswordValid = await bcrypt.compare(PASSWORD, user.password);
         if (!isPasswordValid) {
           return reply.status(401).send({
             success: false,
@@ -31,21 +32,28 @@ export const authController = {
           });
         }
 
+        // Generate access token
         const accessToken = request.server.jwt.sign(
           { username: USERNAME },
-          { expiresIn: ACCESSTOKENLIFETIME } // Access token expires in 1 hour
+          { expiresIn: ACCESSTOKENLIFETIME } // Define ACCESSTOKENLIFETIME
         );
 
         // Generate refresh token
         const refreshToken = request.server.jwt.sign(
           { username: USERNAME },
-          { expiresIn: REFRESHTOKENLIFETIME } // Refresh token expires in 12 hours
+          { expiresIn: REFRESHTOKENLIFETIME } // Define REFRESHTOKENLIFETIME
         );
+
+        // Exclude password before sending the user data
+        const { password, ...userWithoutPassword } = user;
 
         return reply.status(200).send({
           success: true,
-          message: "login success",
-          data: { accessToken, refreshToken },
+          message: "Login successful",
+          data: {
+            user: userWithoutPassword,
+            tokens: { accessToken, refreshToken },
+          },
         });
       } catch (err) {
         request.server.log.error(err);
@@ -76,7 +84,7 @@ export const authController = {
 
         const newAccessToken = request.server.jwt.sign(
           { username: decoded.username },
-          { expiresIn: "1hr" }
+          { expiresIn: ACCESSTOKENLIFETIME } // Define ACCESSTOKENLIFETIME
         );
 
         return reply.status(200).send({
@@ -91,7 +99,7 @@ export const authController = {
           message: "Internal Server Error",
           error:
             err.message ||
-            "An unexpected error occured. Please try again later",
+            "An unexpected error occurred. Please try again later.",
         });
       }
     },

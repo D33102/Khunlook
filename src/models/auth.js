@@ -5,8 +5,15 @@ export const authSchema = {
     body: {
       type: "object",
       properties: {
-        USERNAME: { type: "string", maxLength: 20, pattern: "^[a-zA-Z0-9]+$" },
-        PASSWORD: { type: "string", minLength: 6 },
+        USERNAME: {
+          type: "string",
+          maxLength: 20,
+          pattern: "^[a-zA-Z0-9]+$",
+        },
+        PASSWORD: {
+          type: "string",
+          minLength: 6,
+        },
       },
       required: ["USERNAME", "PASSWORD"],
     },
@@ -19,9 +26,26 @@ export const authSchema = {
           data: {
             type: "object",
             properties: {
-              accessToken: { type: "string" },
-              refreshToken: { type: "string" },
+              user: {
+                type: "object",
+                properties: {
+                  ID: { type: "string" },
+                  username: { type: "string" },
+                  email: { type: "string" },
+                  phone_number: { type: "string", nullable: true },
+                },
+                required: ["ID", "username", "email"],
+              },
+              tokens: {
+                type: "object",
+                properties: {
+                  accessToken: { type: "string" },
+                  refreshToken: { type: "string" },
+                },
+                required: ["accessToken", "refreshToken"],
+              },
             },
+            required: ["user", "tokens"],
           },
         },
         required: ["success", "message", "data"],
@@ -59,6 +83,7 @@ export const authSchema = {
               accessToken: { type: "string" },
               accessTokenExpiredIn: { type: "integer" },
             },
+            required: ["accessToken", "accessTokenExpiredIn"],
           },
         },
         required: ["success", "message", "data"],
