@@ -1,4 +1,5 @@
-import { constraint } from "../utils/parameter";
+import { constraint } from "../utils/parameter.js";
+
 export const developmentSchema = {
     deleteDevelopmentSchema: {
       description: "Delete a child's development information",
