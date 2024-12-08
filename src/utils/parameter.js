@@ -24,6 +24,9 @@ export const constraint = {
       description: "C200",
     };
   },
+  CID: ()=>{
+    
+  },
 
   EMAIL: () => {
     return {

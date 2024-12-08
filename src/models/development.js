@@ -93,8 +93,7 @@ export const developmentSchema = {
     body: {
       type: "object",
       properties: {
-        childpid: constraint.PID(),
-        checkAge: constraint.AGE(),
+        mompid: constraint.PID()
       },
       required: ["childpid"],
     },
@@ -131,6 +130,16 @@ export const developmentSchema = {
         required: ["message"],
       },
     },
+  },
+  addChildDevelopmentSchema:{
+    description: "add child development information",
+    tags: ["Development"],
+    body:{
+      type:"object",
+      properties:{
+        pid: constraint.PID()
+      }
+    }
   },
   queryConfigDevelopmentSchema: {
     description: "Query child's parameter configuration information",

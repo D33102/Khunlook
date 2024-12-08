@@ -6,7 +6,7 @@ export const userController = {
     schema: userSchema.userRegisterSchema,
     handler: async (request, reply) => {
       try {
-        const { NAME, USERNAME, PASSWORD, EMAIL } = request.body;
+        const { NAME, USERNAME, PASSWORD, EMAIL, PHONE_NUMBER } = request.body;
 
         const [existingUser] = await request.server.mysql.execute(
           "SELECT * FROM USER WHERE `USERNAME`= ? OR `EMAIL`= ?",
@@ -21,8 +21,8 @@ export const userController = {
         const hashedPassword = await bcrypt.hash(PASSWORD, 10);
 
         await request.server.mysql.execute(
-          "INSERT INTO USER (`NAME`, `USERNAME`, `PASSWORD`, `EMAIL`) VALUES (?, ?, ?, ?)",
-          [NAME, USERNAME, hashedPassword, EMAIL]
+          "INSERT INTO USER (`NAME`, `USERNAME`, `PASSWORD`, `EMAIL`, `PHONE_NUMBER`) VALUES (?, ?, ?, ?, ?)",
+          [NAME, USERNAME, hashedPassword, EMAIL, PHONE_NUMBER]
         );
 
         return reply.status(200).send({ message: "successfully registered" });

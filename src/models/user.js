@@ -9,8 +9,9 @@ export const userSchema = {
         USERNAME: { type: "string", maxLength: 20, pattern: "^[a-zA-Z0-9]+$" },
         PASSWORD: { type: "string", minLength: 6 },
         EMAIL: { type: "string", format: "email" },
+        PHONE_NUMBER: {type: "string"},
       },
-      required: ["NAME", "USERNAME", "PASSWORD", "EMAIL"],
+      required: ["NAME", "USERNAME", "PASSWORD", "EMAIL", "PHONE_NUMBER"],
     },
     response: {
       200: {

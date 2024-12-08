@@ -299,14 +299,25 @@ export const developmentController = {
   queryChildDevelopment: {
     schema: developmentSchema.queryChildDevelopmentSchema,
     handler: async (request, reply) => {
-      const { childpid } = request.body;
-      if (!childpid) {
-        return reply
-          .status(400)
-          .send({ success: 0, message: "Missing childpid" });
-      }
+      const { mom_pid } = request.body;
+      let rows = []
       try {
-        const parameterNameMax = "MAX_ANAMAI55_DEVELOPMENT";
+        const query = `
+          SELECT PID 
+          FROM NEWBORN
+          WHERE MPID = ?
+        `;
+
+        rows = await request.server.mysql.execute(query, mom_pid);
+        if (rows.length === 0) {
+          return reply.status(404).send({ error: 'User not found or no PERSON records associated.' });
+        }
+      }
+      catch (err){
+        return reply.status(500).send({error: "Internal Server Error"})
+      }
+      rows.forEach(async (row)=>{
+        childpid = row.PID
         const parameterNameMin = "MIN_ANAMAI55_DEVELOPMENT";
         let maxMonth = 0;
         let minMonth = 0;
@@ -314,7 +325,7 @@ export const developmentController = {
         let asphyxia = "2";
 
         await request.server.mysql.execute(
-          "DELETE FROM `SUMMARY_INFO` WHERE PID = ? AND EVALUATION_TYPE LIKE 'DEVELOPMENT%'",
+          "DELETE FROM SUMMARY_INFO WHERE PID = ? AND EVALUATION_TYPE LIKE 'DEVELOPMENT%'",
           [childpid]
         );
 
@@ -371,10 +382,6 @@ export const developmentController = {
                 `,
             [childpid, parameterNameMax, maxMonth]
           );
-
-          const [newResult] = await request.server.mysql.execute(query, [
-            childpid,
-          ]);
 
           newResult.forEach((r) => {
             asphyxia = r.ASPHYXIA || "2";
@@ -436,12 +443,7 @@ export const developmentController = {
             .status(404)
             .send({ success: 0, message: "query not found" });
         }
-      } catch (err) {
-        request.server.log.error(err);
-        return reply
-          .status(500)
-          .send({ success: 0, message: "Internal Server Error" });
-      }
+      })
     },
   },
   queryConfigDevelopment: {
