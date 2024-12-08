@@ -50,6 +50,10 @@ fastify.decorate("authenticate", async function (request, reply) {
 registerDb(fastify);
 
 // Routes
+fastify.get('/', async (request, reply) => {
+  reply.send({ message: 'Hello, Fastify!' });
+});
+
 fastify.register(
   async function (apiV1Routes) {
     apiV1Routes.register(userRoute, { prefix: "/user" });
@@ -61,9 +65,11 @@ fastify.register(
   { prefix: "/api/v1" }
 );
 
+const PORT = parseInt(process.env.PORT) || 3000;
+
 const start = async () => {
   try {
-    await fastify.listen({ port: parseInt(process.env.PORT), host: "0.0.0.0" });
+    await fastify.listen({ port: PORT, host: "0.0.0.0" });
   } catch (err) {
     fastify.log.error(err);
     process.exit(1);
