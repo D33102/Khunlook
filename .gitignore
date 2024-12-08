@@ -37,3 +37,4 @@ temp/
 
 # MySQL data volume
 mysql-data/
+.vercel
