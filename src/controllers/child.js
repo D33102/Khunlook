@@ -1,7 +1,7 @@
 import { childSchema } from "../models/child";
 
 export const childController = {
-    addChildController:{
+    addChild:{
         schema: childSchema.addChildSchema,
         handler: async(request, reply) =>{
             const { momcid,

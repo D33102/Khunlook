@@ -1,9 +1,10 @@
 import { childController } from "../controllers/auth.js";
-export function authRoute(fastify, options, done) {
+import { childSchema } from "../models/child.js";
+export function childRoute(fastify, options, done) {
   fastify.post("/", {
     preValidation: [fastify.authenticate],
-    schema: developmentController.getInformationDevelopment.schema,
+    schema: childSchema.addChildSchema,
   },
-  developmentController.getInformationDevelopment.handler);
+  childController.addChild.handler);
   done();
 }
