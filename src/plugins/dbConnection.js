@@ -12,7 +12,7 @@ export const registerDb = (fastify) => {
     database: process.env.MYSQL_DATABASE,
     promise: true,
     waitforconnections: true,
-    connectionLimit: 10,
+    connectionLimit: 100,
     queueLimit: 0,
   });
 };

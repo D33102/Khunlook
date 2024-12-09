@@ -1,5 +1,5 @@
 import { authSchema } from "../models/auth.js";
-import bcrypt from "bcrypt";
+import bcrypt from "bcryptjs";
 
 const ACCESSTOKENLIFETIME = "1hr";
 const REFRESHTOKENLIFETIME = "12hr";

@@ -2,21 +2,44 @@ version: "3.8"
 
 services:
   mysql:
-    image: mysql:8.0
+    image: mysql/mysql-server:latest
     container_name: mysql
     ports:
       - "${MYSQL_PORT}:3306"
+    expose:
+      - "3306"
     environment:
-      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
-      MYSQL_DATABASE: ${MYSQL_DATABASE}
+      MYSQL_USER: root
+      MYSQL_PASSWORD: 1234
+      MYSQL_ROOT_PASSWORD: 1234
+      MYSQL_DATABASE: APPDEK032022
+      MYSQL_ROOT_HOST: app
+      MYSQL_PORT: 3306
     volumes:
-      - mysql-data:/var/lib/mysql
+      - ./mysql-data:/var/lib/mysql
       - ./init.sql:/docker-entrypoint-initdb.d/init.sql
     networks:
       - app-network
 
-volumes:
-  mysql-data:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "3000:3000"
+    expose:
+      - "3000"
+    environment:
+      NODE_ENV: development
+      MYSQL_HOST: mysql
+      MYSQL_DATABASE: APPDEK032022
+      MYSQL_ROOT_PASSWORD: 1234
+      MYSQL_USER: root
+      MYSQL_PASSWORD: 1234
+      MYSQL_PORT: 3306
+    networks:
+      - app-network
+    restart: on-failure:10
 
 networks:
   app-network:
