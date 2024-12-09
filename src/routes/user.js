@@ -4,7 +4,7 @@ import { userSchema } from "../models/user.js";
 export function userRoute(fastify, options, done) {
   fastify.post("/", userController.userRegister);
   fastify.get(
-    "/:id",
+    "/:user_id",
     {
       preValidation: [fastify.authenticate],
       schema: userController.getUserChildren.schema,
