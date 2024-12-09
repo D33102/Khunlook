@@ -48,7 +48,7 @@ export const userController = {
         const query = `
           SELECT p.*
           FROM USER u
-          JOIN USER_CID uc ON u.ID = uc.USER_ID
+          JOIN USER_CID uc ON u.ID = uc.ID
           JOIN PERSON p ON uc.CID = p.CID
           WHERE u.ID = ?
         `;
