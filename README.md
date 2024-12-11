@@ -101,7 +101,7 @@ Before deploying, ensure the following:
 
    ```bash
    git clone https://github.com/D33102/Khunlook.git
-   cd your-repository
+   cd Khunlook
    ```
 
 2. **Place Files in the Web Directory**:
