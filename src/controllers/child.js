@@ -1,6 +1,32 @@
 import { childSchema } from "../models/child";
 
 export const childController = {
+    getChild: {
+      schema: childSchema.getChildSchema,
+      handler: async (request, reply) => {
+        const { user_id } = request.params;
+        try {
+          const query = `
+            "SELECT PERSON.HOSPCODE,PERSON.CID,PERSON.PID,PERSON.NAME,PERSON.LNAME,PERSON.SEX,PERSON.BIRTH
+            ,PERSON.ABOGROUP,PERSON.RHGROUP,NEWBORN.GA,NEWBORN.BTIME,PERSON_MEMO.MEMO,NEWBORN.BWEIGHT ,NEWBORN.ASPHYXIA 
+            FROM PERSON 
+            LEFT JOIN NEWBORN ON PERSON.PID = NEWBORN.PID 
+            LEFT JOIN PERSON_MEMO ON PERSON.PID = PERSON_MEMO.PID 
+            WHERE PERSON.MOTHER = ? OR PERSON.FATHER = ?
+            ORDER BY PERSON.PID"
+          `;
+          const [rows] = await request.server.mysql.execute(query, user_id);
+          if (rows.length === 0) {
+            return reply.status(404).send({ error: 'User not found or no PERSON records associated.' });
+          }
+
+          return reply.send({ persons: rows });
+        } catch (error) {
+          fastify.log.error(error);
+          return reply.status(500).send({ error: 'Internal Server Error.' });
+        }
+      },
+    },
     addChild:{
         schema: childSchema.addChildSchema,
         handler: async(request, reply) =>{
