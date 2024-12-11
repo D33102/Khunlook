@@ -28,7 +28,6 @@ cd Khunlook
 ### Add Following Files
 
 - **.env**: a centralized location to store configuration settings for your project.
-- **init.sql**: To initialize the database.
 
 ### Run Docker
 
