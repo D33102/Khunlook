@@ -33,19 +33,7 @@ cd Khunlook
 ### Run Docker
 
 ```bash
-docker-compose up --build
-```
-
-### Install Dependencies
-
-```bash
-npm install
-```
-
-### Run Application
-
-```bash
-npm run dev
+docker-compose up --build -d
 ```
 
 ## Deployment
