@@ -30,7 +30,7 @@ export const userController = {
         const ID = result.insertId;
 
         await request.server.mysql.execute(
-          "INSERT INTO USER (`ID`, NAME`, `USERNAME`, `PASSWORD`, `EMAIL`, `PHONE_NUMBER`) VALUES (?, ?, ?, ?, ?, ?)",
+          "INSERT INTO USER (`ID`, `NAME`, `USERNAME`, `PASSWORD`, `EMAIL`, `PHONE_NUMBER`) VALUES (?, ?, ?, ?, ?, ?)",
           [ID, NAME, USERNAME, hashedPassword, EMAIL, PHONE_NUMBER]
         );
 
