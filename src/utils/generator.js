@@ -25,23 +25,3 @@ export async function generateUniquePID(request) {
 
   return pid;
 }
-
-const hashedPassword = await bcrypt.hash(PASSWORD, 10);
-
-// Generate a unique PID
-const PID = await generateUniquePID(request);
-
-const [result] = await request.server.mysql.execute(
-  "INSERT INTO PERSON (`NAME`, `PID`) VALUES (?, ?)",
-  [NAME, PID]
-);
-
-const ID = result.insertId;
-
-await request.server.mysql.execute(
-  "INSERT INTO USER (`ID`, `NAME`, `USERNAME`, `PASSWORD`, `EMAIL`, `PHONE_NUMBER`) VALUES (?, ?, ?, ?, ?, ?)",
-  [ID, NAME, USERNAME, hashedPassword, EMAIL, PHONE_NUMBER]
-);
-
-console.log("Generated unique PID:", PID);
-console.log("Inserted ID:", ID);

@@ -1,5 +1,5 @@
 import { userSchema } from "../models/user.js";
-import bcrypt from "bcrypt";
+import bcrypt from "bcryptjs";
 import { generateUniquePID } from "../utils/generator.js";
 
 export const userController = {
