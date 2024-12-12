@@ -33,6 +33,7 @@ export const authSchema = {
                   username: { type: "string" },
                   email: { type: "string" },
                   phone_number: { type: "string", nullable: true },
+                  PID: { type: "string" },
                 },
                 required: ["ID", "username", "email"],
               },

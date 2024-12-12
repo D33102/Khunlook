@@ -20,8 +20,6 @@ export const constraint = {
   PID: () => {
     return {
       type: "string",
-      pattern: "^(C|A|L|P|S)[0-9]+$",
-      description: "C200",
     };
   },
   CID: () => {

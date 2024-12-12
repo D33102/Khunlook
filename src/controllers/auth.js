@@ -11,7 +11,18 @@ export const authController = {
       try {
         const { USERNAME, PASSWORD } = request.body;
         const [rows] = await request.server.mysql.execute(
-          "SELECT * FROM `USER` WHERE `USERNAME` = ?",
+          `
+          SELECT 
+            USER.*, 
+            PERSON.PID 
+          FROM 
+            USER 
+          JOIN 
+            PERSON 
+          ON 
+            USER.ID = PERSON.ID 
+          WHERE 
+            USER.USERNAME = ?`,
           [USERNAME]
         );
         if (rows.length === 0) {
@@ -45,13 +56,13 @@ export const authController = {
         );
 
         // Exclude password before sending the user data
-        const { password, ...userWithoutPassword } = user;
+        const { password, PID, ...userWithoutPassword } = rows[0];
 
         return reply.status(200).send({
           success: true,
           message: "Login successful",
           data: {
-            user: userWithoutPassword,
+            user: { ...userWithoutPassword, PID },
             tokens: { accessToken, refreshToken },
           },
         });

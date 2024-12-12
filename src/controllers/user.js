@@ -1,5 +1,6 @@
 import { userSchema } from "../models/user.js";
-import bcrypt from "bcryptjs";
+import bcrypt from "bcrypt";
+import { generateUniquePID } from "../utils/generator.js";
 
 export const userController = {
   userRegister: {
@@ -19,10 +20,18 @@ export const userController = {
         }
 
         const hashedPassword = await bcrypt.hash(PASSWORD, 10);
+        const PID = await generateUniquePID(request);
+
+        const [result] = await request.server.mysql.execute(
+          "INSERT INTO PERSON (`NAME`, `PID`) VALUES (?, ?)",
+          [NAME, PID]
+        );
+
+        const ID = result.insertId;
 
         await request.server.mysql.execute(
-          "INSERT INTO USER (`NAME`, `USERNAME`, `PASSWORD`, `EMAIL`, `PHONE_NUMBER`) VALUES (?, ?, ?, ?, ?)",
-          [NAME, USERNAME, hashedPassword, EMAIL, PHONE_NUMBER]
+          "INSERT INTO USER (`ID`, NAME`, `USERNAME`, `PASSWORD`, `EMAIL`, `PHONE_NUMBER`) VALUES (?, ?, ?, ?, ?, ?)",
+          [ID, NAME, USERNAME, hashedPassword, EMAIL, PHONE_NUMBER]
         );
 
         return reply.status(200).send({ message: "successfully registered" });
@@ -32,5 +41,4 @@ export const userController = {
       }
     },
   },
-  
 };
