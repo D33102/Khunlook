@@ -26,9 +26,9 @@ services:
       context: .
       dockerfile: Dockerfile
     ports:
-      - "3000:3000"
+      - "3010:3010"
     expose:
-      - "3000"
+      - "3010"
     environment:
       NODE_ENV: development
       MYSQL_HOST: mysql
