@@ -24,8 +24,12 @@ export const constraint = {
       description: "C200",
     };
   },
-  CID: ()=>{
-    
+  CID: () => {
+    return {
+      type: "integer",
+      minimum: 1,
+      maximum: 9223372036854775807,
+    };
   },
 
   EMAIL: () => {

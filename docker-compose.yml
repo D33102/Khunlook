@@ -26,12 +26,12 @@ services:
       context: .
       dockerfile: Dockerfile
     ports:
-      - "3000:3000"
+      - "3002:3002"
     expose:
-      - "3000"
+      - "3002"
     environment:
       NODE_ENV: development
-      MYSQL_HOST: mysql
+      MYSQL_HOST: localhost
       MYSQL_DATABASE: APPDEK032022
       MYSQL_ROOT_PASSWORD: 1234
       MYSQL_USER: root

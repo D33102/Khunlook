@@ -11,6 +11,7 @@ import { swaggerOptions, swaggerUiOptions } from "./utils/swagger.js";
 import { vaccineRoute } from "./routes/vaccine.js";
 import { developmentRoute } from "./routes/development.js";
 import { growthRoute } from "./routes/growth.js";
+import { childRoute } from "./routes/child.js";
 
 dotenv.config();
 
@@ -21,7 +22,7 @@ const fastify = Fastify({
 });
 
 await fastify.register(cors, {
-  origin: "http://localhost:3001", // Allow requests from Next.js app
+  origin: ["http://localhost:3000", "http://localhost:3002"], // Allow requests from Next.js app
   methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
 });
 
@@ -50,8 +51,8 @@ fastify.decorate("authenticate", async function (request, reply) {
 registerDb(fastify);
 
 // Routes
-fastify.get('/', async (request, reply) => {
-  reply.send({ message: 'Hello, Fastify!' });
+fastify.get("/", async (request, reply) => {
+  reply.send({ message: "Hello, Fastify!" });
 });
 
 fastify.register(
@@ -61,6 +62,7 @@ fastify.register(
     apiV1Routes.register(vaccineRoute, { prefix: "/vaccine" });
     apiV1Routes.register(developmentRoute, { prefix: "/development" });
     apiV1Routes.register(growthRoute, { prefix: "/growth" });
+    apiV1Routes.register(childRoute, { prefix: "/child" });
   },
   { prefix: "/api/v1" }
 );
