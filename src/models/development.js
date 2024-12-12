@@ -131,16 +131,16 @@ export const developmentSchema = {
       },
     },
   },
-  addChildDevelopmentSchema:{
-    description: "add child development information",
-    tags: ["Development"],
-    body:{
-      type:"object",
-      properties:{
-        pid: constraint.PID()
-      }
-    }
-  },
+  // addChildDevelopmentSchema:{
+  //   description: "add child development information",
+  //   tags: ["Development"],
+  //   body:{
+  //     type:"object",
+  //     properties:{
+  //       pid: constraint.PID()
+  //     }
+  //   }
+  // },
   queryConfigDevelopmentSchema: {
     description: "Query child's parameter configuration information",
     tags: ["Development"],
