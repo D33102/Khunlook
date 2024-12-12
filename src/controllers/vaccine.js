@@ -142,10 +142,11 @@ export const vaccineController = {
       } = request.body;
 
       // Convert dates
-      const date = convertThaiDatetoStd(vaccinated_date);
-      const prevDate = prev_dateserv
-        ? convertThaiDatetoStd(prev_dateserv)
-        : "0000-00-00";
+      const date = vaccinated_date;
+      const prevDate = prev_dateserv;
+      // const prevDate = prev_dateserv
+      //   ? convertThaiDatetoStd(prev_dateserv)
+      //   : "0000-00-00";
       const currentdate = new Date()
         .toISOString()
         .slice(0, 19)

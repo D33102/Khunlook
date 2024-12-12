@@ -1,3 +1,4 @@
+import bcrypt from "bcryptjs";
 export async function generateUniquePID(request) {
   const characters =
     "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
