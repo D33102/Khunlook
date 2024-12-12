@@ -1,5 +1,6 @@
 import { childSchema } from "../models/child.js";
 import { convertThaiDatetoStd } from "../utils/date.js";
+import { generateUniquePID } from "../utils/generator.js";
 
 export const childController = {
   getChild: {
@@ -37,7 +38,7 @@ export const childController = {
   addChild: {
     schema: childSchema.addChildSchema,
     handler: async (request, reply) => {
-      const {
+      let {
         momcid,
         childcid,
         childpid,
@@ -54,7 +55,8 @@ export const childController = {
         lowbtweigth,
         birthAsphyxia,
       } = request.body;
-
+      childpid = generateUniquePID(request)
+      childcid = 99999
       let childga = isNaN(gaweek) ? null : gaweek;
       let childlowbtweight = isNaN(lowbtweigth) ? null : lowbtweigth;
       let childbirthAsphyxia = isNaN(birthAsphyxia) ? null : birthAsphyxia;
