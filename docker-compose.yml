@@ -5,7 +5,7 @@ services:
     image: mysql/mysql-server:latest
     container_name: mysql
     ports:
-      - "${MYSQL_PORT}:3306"
+      - "3306:3306"
     expose:
       - "3306"
     environment:
@@ -43,5 +43,4 @@ services:
 
 networks:
   khunlook:
-    driver: bridge
-    name: khunlook
+    external: true
