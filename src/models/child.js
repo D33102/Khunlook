@@ -1,91 +1,69 @@
-import { constraint } from "../utils/parameter"
-export const childSchema={
-    getChildSchema:{
-      description:"Get children of the specific userid",
-      tags: ["child"],
-      body: {
+import { constraint } from "../utils/parameter.js";
+export const childSchema = {
+  getChildSchema: {
+    description: "Get children of the specific userid",
+    tags: ["child"],
+    response: {
+      200: {
         type: "object",
         properties: {
-          momcid: { type: "string"},
-          childcid: { type: "string"},
-          childpid: { type: "string"},
-          childhospcode: { type: "string"},
-          childname: { type: "string" },
-          datepickerchild: { type: "string", format: "date" },
-          sexchild: { type: "string", enum: ["M", "F"],  },
-          gaweek: { type: "number",  },
-          childfullname: { type: "string"},
-          childbtime: { type: "string", format: "time", },
-          childabo: { type: "string", },
-          childrh: { type: "string",  },
-          childmemo: { type: "string", },
-          lowbtweigth: { type: "boolean", },
-          birthAsphyxia: { type: "boolean",  },
+          message: { type: "string" },
+          data: { type: "object", additionalProperties: true },
+          success: { type: "number" },
         },
-        required: ["momcid"], // Ensure all necessary fields are included
+        required: ["message"],
       },
-      response: {
-        200: {
-          type: "object",
-          properties: {
-            message: { type: "string" },
-            success: { type: "number" },
-          },
-          required: ["message"],
+      500: {
+        type: "object",
+        properties: {
+          message: { type: "string" },
+          success: { type: "number" },
         },
-        500: {
-          type: "object",
-          properties: {
-            message: { type: "string" },
-            success: { type: "number" },
-          },
-          required: ["message"],
-        },
+        required: ["message"],
       },
-
     },
-    addChildSchema:{
-            description: "Add child Development",
-            tags: ["child"],
-            body: {
-              type: "object",
-              properties: {
-                momcid: constraint.CID(),
-                childcid: constraint,
-                childpid,
-                childhospcode,
-                childname,
-                datepickerchild,
-                sexchild,
-                gaweek,
-                childfullname,
-                childbtime,
-                childabo,
-                childrh,
-                childmemo,
-                lowbtweigth,
-                birthAsphyxia,
-              },
-              required: ["childpid", "devcode"],
-            },
-            response: {
-              200: {
-                type: "object",
-                properties: {
-                  message: { type: "string" },
-                  success: { type: "number" },
-                },
-                required: ["message"],
-              },
-              500: {
-                type: "object",
-                properties: {
-                  success: { type: "number" },
-                  message: { type: "string" },
-                },
-                required: ["message"],
-              },
-
-          },
-    }
-}
+  },
+  addChildSchema: {
+    description: "Add child Development",
+    tags: ["child"],
+    body: {
+      type: "object",
+      properties: {
+        momcid: constraint.CID(),
+        childcid: constraint.CID(),
+        childpid: constraint.PID(),
+        childhospcode: constraint.HOSPCODE(),
+        childname: { type: "string" },
+        datepickerchild: constraint.DATE(),
+        sexchild: constraint.SEX(),
+        gaweek: constraint.GA(),
+        childfullname: { type: "string" },
+        childbtime: constraint.BTIME(),
+        childabo: constraint.ABOGROUP(),
+        childrh: constraint.RHGROUP(),
+        childmemo: constraint.MEMO(),
+        lowbtweigth: constraint.BWEIGHT(),
+        birthAsphyxia: constraint.ASPHYXIA(),
+      },
+      required: ["childpid"],
+    },
+    response: {
+      201: {
+        type: "object",
+        properties: {
+          message: { type: "string" },
+          success: { type: "number" },
+        },
+        required: ["message"],
+      },
+      500: {
+        type: "object",
+        properties: {
+          success: { type: "number" },
+          message: { type: "string" },
+        },
+        required: ["message"],
+      },
+    },
+  },
+};
