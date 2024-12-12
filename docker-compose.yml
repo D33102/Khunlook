@@ -19,16 +19,16 @@ services:
       - ./mysql-data:/var/lib/mysql
       - ./init.sql:/docker-entrypoint-initdb.d/init.sql
     networks:
-      - app-network
+      - khunlook
 
   app:
     build:
       context: .
       dockerfile: Dockerfile
     ports:
-      - "3000:3000"
+      - "3002:3002"
     expose:
-      - "3000"
+      - "3002"
     environment:
       NODE_ENV: development
       MYSQL_HOST: mysql
@@ -38,9 +38,10 @@ services:
       MYSQL_PASSWORD: 1234
       MYSQL_PORT: 3306
     networks:
-      - app-network
+      - khunlook
     restart: on-failure:10
 
 networks:
-  app-network:
+  khunlook:
     driver: bridge
+    name: khunlook
