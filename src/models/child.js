@@ -29,7 +29,7 @@ export const childSchema = {
     body: {
       type: "object",
       properties: {
-        momcid: constraint.PID(),
+        momcid: constraint.CID(),
         childcid: constraint.CID(),
         childpid: constraint.PID(),
         childhospcode: constraint.HOSPCODE(),
