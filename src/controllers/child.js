@@ -28,7 +28,7 @@ export const childController = {
       } catch (error) {
         console.log(error);
         return reply.status(500).send({
-          message: "something is wrong",
+          message: "something is wrong with sql execute",
           error: "Internal Server Error.",
         });
       }
@@ -54,15 +54,13 @@ export const childController = {
         lowbtweigth,
         birthAsphyxia,
       } = request.body;
-      childpid = generateUniquePID(request);
+
+      childpid = await generateUniquePID(request);
       childcid = 99999;
       let childga = isNaN(gaweek) ? null : gaweek;
       let childlowbtweight = isNaN(lowbtweigth) ? null : lowbtweigth;
       let childbirthAsphyxia = isNaN(birthAsphyxia) ? null : birthAsphyxia;
-      let formattedDatepickerChild = null;
-      if (datepickerchild) {
-        formattedDatepickerChild = convertThaiDatetoStd(datepickerchild);
-      }
+      let formattedDatepickerChild = datepickerchild;
 
       if (!childname) {
         return reply.code(400).send({ error: "กรุณากรอกชื่อบุตร" });
@@ -112,7 +110,6 @@ export const childController = {
             childbirthAsphyxia,
           ]
         );
-
         await request.server.mysql.execute(
           `INSERT INTO PERSON_MEMO (HOSPCODE, PID, MEMO) VALUES (?, ?, ?)`,
           [childhospcode, childpid, childmemo]
@@ -121,12 +118,11 @@ export const childController = {
           .code(201)
           .send({ message: "add child success", success: 1 });
       } catch (error) {
-        console.log(request);
         reply.code(500).send({
           message: "เกิดข้อผิดพลาดในการบันทึกข้อมูล",
           error: "เกิดข้อผิดพลาดในการบันทึกข้อมูล",
         });
-        console.error(error);
+        // console.error(error);
       }
     },
   },

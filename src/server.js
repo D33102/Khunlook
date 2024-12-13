@@ -67,7 +67,7 @@ fastify.register(
   { prefix: "/api/v1" }
 );
 
-const PORT = parseInt(process.env.PORT) || 3000;
+const PORT = parseInt(process.env.PORT) || 3002;
 
 const start = async () => {
   try {
