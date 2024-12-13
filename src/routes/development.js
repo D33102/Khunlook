@@ -44,7 +44,7 @@ export function developmentRoute(fastify, options, done) {
   );
 
   fastify.delete(
-    "/",
+    "/:childpid/:devcode",
     {
       preValidation: [fastify.authenticate],
       schema: developmentController.deleteDevelopment.schema,

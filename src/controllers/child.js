@@ -6,13 +6,13 @@ export const childController = {
   getChild: {
     schema: childSchema.getChildSchema,
     handler: async (request, reply) => {
-      const { user_pid } = request.params;
+      const { user_id } = request.params;
       try {
         const query = `SELECT PERSON.HOSPCODE,PERSON.CID,PERSON.PID,PERSON.NAME,PERSON.LNAME,PERSON.SEX,PERSON.BIRTH,PERSON.ABOGROUP,PERSON.RHGROUP,NEWBORN.GA,NEWBORN.BTIME,PERSON_MEMO.MEMO,NEWBORN.BWEIGHT ,NEWBORN.ASPHYXIA 
         FROM PERSON LEFT JOIN NEWBORN ON PERSON.PID = NEWBORN.PID LEFT JOIN PERSON_MEMO ON PERSON.PID = PERSON_MEMO.PID WHERE PERSON.MOTHER = ? OR PERSON.FATHER = ? ORDER BY PERSON.PID;`;
         const [rows] = await request.server.mysql.execute(query, [
-          user_pid,
-          user_pid,
+          user_id,
+          user_id,
         ]);
         if (rows.length === 0) {
           return reply
@@ -21,14 +21,14 @@ export const childController = {
         }
         console.log(rows);
         return reply.code(200).send({
-          message: `get child of user ${user_pid} success`,
+          message: `get child of user ${user_id} success`,
           data: rows,
           success: 1,
         });
       } catch (error) {
         console.log(error);
         return reply.status(500).send({
-          message: "something is wrong",
+          message: "something is wrong with sql execute",
           error: "Internal Server Error.",
         });
       }
@@ -54,15 +54,12 @@ export const childController = {
         lowbtweigth,
         birthAsphyxia,
       } = request.body;
-      childpid = generateUniquePID(request)
-      childcid = 99999
+      childpid = await generateUniquePID(request);
+      childcid = 99999;
       let childga = isNaN(gaweek) ? null : gaweek;
       let childlowbtweight = isNaN(lowbtweigth) ? null : lowbtweigth;
       let childbirthAsphyxia = isNaN(birthAsphyxia) ? null : birthAsphyxia;
-      let formattedDatepickerChild = null;
-      if (datepickerchild) {
-        formattedDatepickerChild = convertThaiDatetoStd(datepickerchild);
-      }
+      let formattedDatepickerChild = datepickerchild;
 
       if (!childname) {
         return reply.code(400).send({ error: "กรุณากรอกชื่อบุตร" });
@@ -112,7 +109,6 @@ export const childController = {
             childbirthAsphyxia,
           ]
         );
-
         await request.server.mysql.execute(
           `INSERT INTO PERSON_MEMO (HOSPCODE, PID, MEMO) VALUES (?, ?, ?)`,
           [childhospcode, childpid, childmemo]
@@ -121,12 +117,11 @@ export const childController = {
           .code(201)
           .send({ message: "add child success", success: 1 });
       } catch (error) {
-        console.log(request);
         reply.code(500).send({
           message: "เกิดข้อผิดพลาดในการบันทึกข้อมูล",
           error: "เกิดข้อผิดพลาดในการบันทึกข้อมูล",
         });
-        console.error(error);
+        // console.error(error);
       }
     },
   },

@@ -6,18 +6,15 @@ export const developmentController = {
     schema: developmentSchema.deleteDevelopmentSchema,
     handler: async (request, reply) => {
       try {
-        const { childpid, devcode } = request.body;
+        const { childpid, devcode } = request.params;
         await request.server.mysql.execute(
           "DELETE FROM DEVELOPMENT WHERE PID = ? AND DEVELOPMENT = ?",
           [childpid, devcode]
         );
-        return reply
-          .status(200)
-          .send({
-            message:
-              "successfully deleted development with pid=${childpid} and devcode=${devcode}",
-            success: 1,
-          });
+        return reply.status(200).send({
+          message: `successfully deleted development with pid=${childpid} and devcode=${devcode}`,
+          success: 1,
+        });
       } catch (err) {
         request.server.log.error(err);
         return reply
@@ -29,7 +26,7 @@ export const developmentController = {
   getInformationDevelopment: {
     schema: developmentSchema.getDevelopmentInformationSchema,
     handler: async (request, reply) => {
-      const {
+      let {
         ageMin,
         ageMax,
         childpid = null,
@@ -41,13 +38,11 @@ export const developmentController = {
       } = request.body;
 
       if (isNaN(ageMin) || isNaN(ageMax))
-        return reply
-          .status(400)
-          .send({
-            message: "Invalid input: ageMin or ageMax is not a number",
-            success: 0,
-          });
-
+        return reply.status(400).send({
+          message: "Invalid input: ageMin or ageMax is not a number",
+          success: 0,
+        });
+      let rows = [];
       let rows1 = [];
       let rows2 = [];
       let rows3 = [];
@@ -96,7 +91,7 @@ export const developmentController = {
                 `;
           }
 
-          const [rows] = await request.server.mysql.execute(query, params);
+          [rows] = await request.server.mysql.execute(query, params);
           rows1 = rows;
         } else {
           // Fetch data when ageMax is -1
@@ -106,7 +101,7 @@ export const developmentController = {
                 INNER JOIN NEWBORN n ON n.PID = pc.PID
                 WHERE pc.PID = ?;
                 `;
-          const [newbornInfo] = await request.server.mysql.execute(query, [
+          let [newbornInfo] = await request.server.mysql.execute(query, [
             childpid,
           ]);
 
@@ -127,7 +122,7 @@ export const developmentController = {
                     FROM GL_DEVELOPMENT_DAIM
                     WHERE MIN_AGE_MONTH >= ? AND MAX_AGE_MONTH >= ?;
                 `;
-            const [rows] = await request.server.mysql.execute(query, [
+            [rows] = await request.server.mysql.execute(query, [
               minMonth,
               maxMonth,
             ]);
@@ -215,6 +210,7 @@ export const developmentController = {
             }
           } else {
             // Information summary query
+
             query = `
                     SELECT CODE, TYPE, MIN_AGE_MONTH, MAX_AGE_MONTH, AGE_MONTH_DESCRIPTION,
                             (timestampdiff(month, ?, DATE_OCCURRED)) AS MONTH_AT_OCCURRED, DATE_OCCURRED, 'GL_DEVELOPMENT' AS TBName
@@ -248,7 +244,7 @@ export const developmentController = {
             ];
           }
 
-          const [rows] = await request.server.mysql.execute(query, params);
+          [rows] = await request.server.mysql.execute(query, params);
           rows2 = rows;
 
           // Fetch GA from NEWBORN table
@@ -265,15 +261,13 @@ export const developmentController = {
           );
           rows3 = personResult;
           if (rows1.length > 0 || rows2.length > 0) {
-            return reply
-              .status(200)
-              .send({
-                success: 1,
-                content: rows1,
-                history: rows2,
-                GA: GA,
-                person: rows3,
-              });
+            return reply.status(200).send({
+              success: 1,
+              content: rows1,
+              history: rows2,
+              GA: GA,
+              person: rows3,
+            });
           } else {
             return reply
               .status(404)
@@ -300,7 +294,7 @@ export const developmentController = {
     schema: developmentSchema.queryChildDevelopmentSchema,
     handler: async (request, reply) => {
       const { mom_pid } = request.body;
-      let rows = []
+      let rows = [];
       try {
         const query = `
           SELECT PID 
@@ -310,14 +304,15 @@ export const developmentController = {
 
         rows = await request.server.mysql.execute(query, mom_pid);
         if (rows.length === 0) {
-          return reply.status(404).send({ error: 'User not found or no PERSON records associated.' });
+          return reply
+            .status(404)
+            .send({ error: "User not found or no PERSON records associated." });
         }
+      } catch (err) {
+        return reply.status(500).send({ error: "Internal Server Error" });
       }
-      catch (err){
-        return reply.status(500).send({error: "Internal Server Error"})
-      }
-      rows.forEach(async (row)=>{
-        childpid = row.PID
+      rows.forEach(async (row) => {
+        childpid = row.PID;
         const parameterNameMin = "MIN_ANAMAI55_DEVELOPMENT";
         let maxMonth = 0;
         let minMonth = 0;
@@ -443,7 +438,7 @@ export const developmentController = {
             .status(404)
             .send({ success: 0, message: "query not found" });
         }
-      })
+      });
     },
   },
   queryConfigDevelopment: {
@@ -457,13 +452,11 @@ export const developmentController = {
             [childpid]
           );
           if (rows1.length > 0) {
-            return reply
-              .status(200)
-              .send({
-                success: 1,
-                content: rows1,
-                message: "query config completed",
-              });
+            return reply.status(200).send({
+              success: 1,
+              content: rows1,
+              message: "query config completed",
+            });
           }
         }
         return reply
@@ -501,12 +494,12 @@ export const developmentController = {
         if (isUpdate == 0) {
           await request.server.mysql.execute(
             "INSERT INTO DEVELOPMENT (HOSPCODE, PID, DATE_RECORDED, DATE_OCCURRED, DEVELOPMENT) VALUES (?, ?, ?, ?, ?)",
-            [hospcode, childpid, currentdate, daterec, devcode]
+            [hospcode, childpid, currentdate, dateocc, devcode]
           );
         } else if (isUpdate == 1) {
           await request.server.mysql.execute(
             "UPDATE DEVELOPMENT SET DATE_RECORDED = ?, DATE_OCCURRED = ? WHERE PID = ? AND DEVELOPMENT = ?",
-            [currentdate, daterec, childpid, devcode]
+            [currentdate, dateocc, childpid, devcode]
           );
         }
 

@@ -4,14 +4,6 @@ export const developmentSchema = {
   deleteDevelopmentSchema: {
     description: "Delete a child's development information",
     tags: ["Development"],
-    body: {
-      type: "object",
-      properties: {
-        childpid: constraint.PID(),
-        devcode: constraint.DEVELOPMENT(),
-      },
-      required: ["childpid", "devcode"],
-    },
     response: {
       200: {
         type: "object",
@@ -43,7 +35,7 @@ export const developmentSchema = {
         childpid: constraint.PID(),
         childbirth: constraint.DATE_NULLABLE(),
         childcorrectedbirth: constraint.DATE_NULLABLE(),
-        loggedin: { type: "boolean" },
+        loggedin: { type: "number" },
         tableName: constraint.TBName_DEVELOPMENT(),
         // childlowbtweigth: constraint.WEIGHT_NULLABLE(),
       },
@@ -54,10 +46,21 @@ export const developmentSchema = {
         type: "object",
         properties: {
           success: { type: "number" },
-          content: { type: "array", items: { type: "object" } },
-          history: { type: "array", items: { type: "object" }, nullable: true },
+          content: {
+            type: "array",
+            items: { type: "object", additionalProperties: true },
+          },
+          history: {
+            type: "array",
+            items: { type: "object", additionalProperties: true },
+            nullable: true,
+          },
           GA: { type: "string", nullable: true },
-          person: { type: "array", items: { type: "object" }, nullable: true },
+          person: {
+            type: "array",
+            items: { type: "object", additionalProperties: true },
+            nullable: true,
+          },
         },
       },
       400: {
@@ -93,7 +96,7 @@ export const developmentSchema = {
     body: {
       type: "object",
       properties: {
-        mompid: constraint.PID()
+        mompid: constraint.PID(),
       },
       required: ["childpid"],
     },
