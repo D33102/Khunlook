@@ -59,7 +59,7 @@ export const vaccineController = {
             inplan,
           });
         } else {
-          return reply.send({ success: 0 });
+          return reply.code(400).send({ success: 0 });
         }
       } catch (err) {
         request.server.log.error(err);
@@ -70,31 +70,58 @@ export const vaccineController = {
   createVaccine: {
     schema: vaccineSchema.vaccineCreateInformationSchema,
     handler: async (request, reply) => {
-      const { search, momcid } = request.body;
+      const { vaccineplace, childpid, vaccinetype, vaccinated_date, months } =
+        request.body;
 
       // SQL query to fetch hospital data based on search criteria
-      const query = `
-          SELECT CODE_HOSPITAL.HOSPITALCODE AS id, CODE_HOSPITAL.HOSPITAL AS text 
-          FROM CODE_HOSPITAL 
-          LEFT JOIN USER_HOSPITAL ON CODE_HOSPITAL.HOSPITALCODE = USER_HOSPITAL.HOSPITALCODE 
-          WHERE (CODE_HOSPITAL.STANDARD = 1 AND CODE_HOSPITAL.HOSPITAL LIKE ?) 
-          OR (CODE_HOSPITAL.STANDARD = 0 AND USER_HOSPITAL.CID = ? AND CODE_HOSPITAL.HOSPITAL LIKE ?) 
-          LIMIT 150
+      const query1 = `
+          INSERT INTO EPI (VACCINEPLACE,PID,DATE_SERV,VACCINETYPE,D_UPDATE) VALUES (?,?,?,?,?)
         `;
+      const query2 = `INSERT INTO EPI_ADDITIONAL (HOSPCODE,PID,DATE_SERV,VACCINETYPE,AGE_MONTH) VALUES (?,?,?,?,?)`;
+      const getCurrentDateTime = () => {
+        const now = new Date();
+        const year = now.getFullYear();
+        const month = String(now.getMonth() + 1).padStart(2, "0"); // Months are 0-based
+        const day = String(now.getDate()).padStart(2, "0");
+        const hours = String(now.getHours()).padStart(2, "0");
+        const minutes = String(now.getMinutes()).padStart(2, "0");
+        const seconds = String(now.getSeconds()).padStart(2, "0");
 
+        return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
+      };
+
+      // Example usage:
+      console.log(request.body);
+      const currentDateTime = getCurrentDateTime();
       try {
         // Execute the query with parameters
-        const [result] = await request.server.mysql.execute(query, [
-          `%${search}%`,
-          momcid,
-          `%${search}%`,
-        ]);
-
+        if (!months) {
+          const [result1] = await request.server.mysql.execute(query1, [
+            vaccineplace,
+            childpid,
+            vaccinated_date,
+            vaccinetype,
+            currentDateTime,
+          ]);
+        } else {
+          const [result2] = await request.server.mysql.execute(query2, [
+            99999,
+            childpid,
+            vaccinated_date,
+            vaccinetype,
+            months,
+          ]);
+        }
         // Send the response
-        return reply.send({ content: result });
+
+        return reply
+          .code(200)
+          .send({ message: "add vaccine success", success: 1 });
       } catch (err) {
         request.server.log.error(err);
-        return reply.send({ success: 0, error: "Database query failed" });
+        return reply
+          .code(500)
+          .send({ success: 0, error: "Database query failed" });
       }
     },
   },
@@ -125,7 +152,9 @@ export const vaccineController = {
         return reply.send({ content: result });
       } catch (err) {
         request.server.log.error(err);
-        return reply.send({ success: 0, error: "Database query failed" });
+        return reply
+          .code(500)
+          .send({ success: 0, error: "Database query failed" });
       }
     },
   },
@@ -142,10 +171,11 @@ export const vaccineController = {
       } = request.body;
 
       // Convert dates
-      const date = convertThaiDatetoStd(vaccinated_date);
-      const prevDate = prev_dateserv
-        ? convertThaiDatetoStd(prev_dateserv)
-        : "0000-00-00";
+      const date = vaccinated_date;
+      const prevDate = prev_dateserv;
+      // const prevDate = prev_dateserv
+      //   ? convertThaiDatetoStd(prev_dateserv)
+      //   : "0000-00-00";
       const currentdate = new Date()
         .toISOString()
         .slice(0, 19)

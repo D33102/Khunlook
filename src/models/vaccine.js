@@ -108,7 +108,7 @@ export const vaccineSchema = {
         vaccineplace: { type: "string" },
         childpid: constraint.PID(),
         vaccinetype: constraint.VACCINETYPE(),
-        vaccinated_date: { type: "string", format: "date" },
+        vaccinated_date: constraint.DATE(),
         months: { type: "string", nullable: true },
       },
       required: ["vaccineplace", "childpid", "vaccinetype", "vaccinated_date"],
@@ -201,19 +201,9 @@ export const vaccineSchema = {
         vaccineplace: { type: "string", nullable: true },
         childpid: constraint.PID(),
         vaccinetype: constraint.VACCINETYPE(),
-        vaccinated_date: {
-          type: "string",
-          description: "Updated vaccination date (DD-MM-YYYY)",
-        },
-        prev_dateserv: {
-          type: "string",
-          description: "Previous vaccination date (DD-MM-YYYY)",
-        },
-        months: {
-          type: "string",
-          nullable: true,
-          description: "Age in months",
-        },
+        vaccinated_date: constraint.DATE(),
+        prev_dateserv: constraint.DATE(),
+        months: { type: "string" },
       },
     },
     response: {
