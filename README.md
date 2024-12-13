@@ -35,124 +35,90 @@ cd Khunlook
 docker-compose up --build -d
 ```
 
-## Deployment
+## Deployment Guide on Vultr using Debian
 
 ### Prerequisites
 
-Before deploying, ensure the following:
+1. **Vultr Account**: Ensure you have an active Vultr account.
+2. **Server Setup**:
+   - A deployed Debian server on Vultr.
+   - SSH access to the server.
+3. **Application Code**:
+   - Codebase ready for deployment (Node.js).
 
-1. An AWS account is set up.
-2. Basic knowledge of SSH and Linux commands.
-3. Required files for the website are in this repository.
-4. [AWS CLI](https://aws.amazon.com/cli/) installed locally (optional but recommended).
+### Steps for Deployment
 
-### Setup EC2 Instance
+#### 1. Connect to Your Vultr Server
 
-1. **Launch an EC2 Instance**:
+1. Get the server's public IP address and SSH credentials from the Vultr dashboard.
+2. Use the following command to connect:
 
-   - Log in to the [AWS Management Console](https://aws.amazon.com/console/).
-   - Go to **EC2 Dashboard** > **Launch Instance**.
-   - Choose the AMI (Amazon Linux 2 is recommended).
-   - Select the instance type (e.g., `t2.micro` for free-tier).
-   - Configure instance details, storage, and tags as needed.
-   - Create or select a security group allowing HTTP (port 80) and SSH (port 22).
-   - Launch the instance and download the key pair (e.g., `my-key.pem`).
+```bash
+   ssh root@<SERVER_IP>
+```
 
-2. **Connect to the Instance**:
-   - Open a terminal and navigate to the directory where the key pair is stored.
-   - Run the following command to connect via SSH:
-     ```bash
-     ssh -i my-key.pem ec2-user@<EC2-Public-IP>
-     ```
+#### 2. Install dependencies
 
-### Configuring the Environment
+```bash
+   sudo apt update
+```
 
-1. **Update the Package Manager**:
+1. Install git
 
-   ```bash
-   sudo yum update -y
-   ```
+```bash
+   sudo apt install git
+```
 
-2. **Install a Web Server (e.g., Nginx or Apache)**:
+2. Install docker
 
-   - For Nginx:
-     ```bash
-     sudo amazon-linux-extras install nginx1 -y
-     sudo systemctl start nginx
-     sudo systemctl enable nginx
-     ```
-   - For Apache:
-     ```bash
-     sudo yum install httpd -y
-     sudo systemctl start httpd
-     sudo systemctl enable httpd
-     ```
+```bash
+   sudo apt install -y apt-transport-https ca-certificates curl software-properties-common
+   curl -fsSL https://download.docker.com/linux/debian/gpg | sudo gpg --dearmor -o /usr/share/keyrings/docker-archive-keyring.gpg
+   echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/docker-archive-keyring.gpg] https://download.docker.com/linux/debian $(lsb_release -cs) stable" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
+```
 
-3. **Install Additional Dependencies** (if needed for your website):
-   ```bash
-   sudo yum install git nodejs npm -y  # Example: Git, Node.js, and npm
-   ```
+```bash
+   sudo apt install -y docker-ce docker-ce-cli containerd.io
+```
 
----
+3. Install docker compose
 
-### Deploying the Website
+```bash
+   sudo curl -L "https://github.com/docker/compose/releases/download/<VERSION>/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
+```
 
-1. **Clone the Repository to the Instance**:
+```bash
+   sudo curl -L "https://github.com/docker/compose/releases/download/v2.25.0/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
+```
 
-   ```bash
-   git clone https://github.com/D33102/Khunlook.git
+```bash
+   sudo chmod +x /usr/local/bin/docker-compose
+```
+
+#### 3. Clone the project using git
+
+```bash
+   git clone https://<TOKEN>@<HOST>/<USERNAME>/<REPO>.git
+```
+
+#### 4. Run the server
+
+1. Run frontend
+
+```bash
+   cd khunlook-indiv-frontend
+```
+
+```bash
+   docker compose up --build -d
+```
+
+2. Run backend
+
+```bash
    cd Khunlook
-   ```
+```
 
-2. **Place Files in the Web Directory**:
-
-   - For Nginx:
-     ```bash
-     sudo cp -r * /usr/share/nginx/html/
-     sudo systemctl restart nginx
-     ```
-   - For Apache:
-     ```bash
-     sudo cp -r * /var/www/html/
-     sudo systemctl restart httpd
-     ```
-
-3. **Adjust File Permissions**:
-   ```bash
-   sudo chmod -R 755 /usr/share/nginx/html/  # For Nginx
-   sudo chmod -R 755 /var/www/html/         # For Apache
-   ```
-
----
-
-### Accessing the Website
-
-- Locate your EC2 instance's **Public IPv4 address** in the AWS Management Console.
-- Open a web browser and navigate to `http://<EC2-Public-IP>`.
-
----
-
-### Troubleshooting
-
-1. **Check Service Status**:
-
-   ```bash
-   sudo systemctl status nginx   # For Nginx
-   sudo systemctl status httpd   # For Apache
-   ```
-
-2. **Verify Security Group Rules**:
-
-   - Ensure inbound rules allow HTTP (port 80) and SSH (port 22).
-
-3. **Inspect Logs**:
-   - For Nginx:
-     ```bash
-     sudo tail -f /var/log/nginx/access.log
-     sudo tail -f /var/log/nginx/error.log
-     ```
-   - For Apache:
-     ```bash
-     sudo tail -f /var/log/httpd/access_log
-     sudo tail -f /var/log/httpd/error_log
-     ```
+```bash
+   docker compose up --build -d
+```
