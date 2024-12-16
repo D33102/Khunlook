@@ -22,6 +22,7 @@ export const childController = {
         console.log(rows);
         return reply.code(200).send({
           message: `get child of user ${user_id} success`,
+          message: `get child of user ${user_id} success`,
           data: rows,
           success: 1,
         });
@@ -54,7 +55,7 @@ export const childController = {
         lowbtweigth,
         birthAsphyxia,
       } = request.body;
-      childpid = await generateUniquePID(request);
+      childpid = generateUniquePID(request);
       childcid = 99999;
       let childga = isNaN(gaweek) ? null : gaweek;
       let childlowbtweight = isNaN(lowbtweigth) ? null : lowbtweigth;
