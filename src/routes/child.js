@@ -17,5 +17,13 @@ export function childRoute(fastify, options, done) {
     },
     childController.addChild.handler
   );
+  fastify.post(
+    "/edit",
+    {
+      preValidation: [fastify.authenticate],
+      schema: childSchema.editChildSchema,
+    },
+    childController.editChild.handler
+  )
   done();
 }

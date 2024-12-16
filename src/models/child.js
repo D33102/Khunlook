@@ -66,4 +66,47 @@ export const childSchema = {
       },
     },
   },
+  editChildSchema:{
+    description: "Add child Development",
+    tags: ["child"],
+    body: {
+      type: "object",
+      properties: {
+        momcid: constraint.PID(),
+        childcid: constraint.CID(),
+        childpid: constraint.PID(),
+        childhospcode: constraint.HOSPCODE(),
+        childname: { type: "string" },
+        datepickerchild: constraint.DATE(),
+        sexchild: constraint.SEX(),
+        gaweek: constraint.GA(),
+        childfullname: { type: "string" },
+        childbtime: constraint.BTIME(),
+        childabo: constraint.ABOGROUP(),
+        childrh: constraint.RHGROUP(),
+        childmemo: constraint.MEMO(),
+        lowbtweigth: constraint.BWEIGHT(),
+        birthAsphyxia: constraint.ASPHYXIA(),
+      },
+      required: ["momcid"],
+    },
+    response: {
+      200: {
+        type: "object",
+        properties: {
+          message: { type: "string" },
+          success: { type: "number" },
+        },
+        required: ["message"],
+      },
+      500: {
+        type: "object",
+        properties: {
+          success: { type: "number" },
+          message: { type: "string" },
+        },
+        required: ["message"],
+      },
+    },
+  }
 };

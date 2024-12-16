@@ -125,4 +125,10 @@ export const childController = {
       }
     },
   },
+  editChild:{
+    schema: childSchema.editChildSchema,
+    handler:async (request, reply)=>{
+      
+    }
+  }
 };
