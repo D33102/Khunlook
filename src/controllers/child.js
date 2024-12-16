@@ -55,13 +55,12 @@ export const childController = {
         lowbtweigth,
         birthAsphyxia,
       } = request.body;
-      childpid = generateUniquePID(request);
+      childpid = await generateUniquePID(request);
       childcid = 99999;
       let childga = isNaN(gaweek) ? null : gaweek;
       let childlowbtweight = isNaN(lowbtweigth) ? null : lowbtweigth;
       let childbirthAsphyxia = isNaN(birthAsphyxia) ? null : birthAsphyxia;
       let formattedDatepickerChild = datepickerchild;
-
       if (!childname) {
         return reply.code(400).send({ error: "กรุณากรอกชื่อบุตร" });
       }
@@ -77,7 +76,8 @@ export const childController = {
           .toISOString()
           .slice(0, 19)
           .replace("T", " ");
-
+        console.log(currentdate)
+        console.log(childpid)
         await request.server.mysql.execute(
           `INSERT INTO PERSON (HOSPCODE, CID, PID, NAME, LNAME, SEX, BIRTH, MOTHER, ABOGROUP, RHGROUP, D_UPDATE)
                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
@@ -95,7 +95,6 @@ export const childController = {
             currentdate,
           ]
         );
-
         await request.server.mysql.execute(
           `INSERT INTO NEWBORN (HOSPCODE, PID, MPID, BTIME, GA, D_UPDATE, BWEIGHT, ASPHYXIA)
                    VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
@@ -129,7 +128,6 @@ export const childController = {
   editChild:{
     schema: childSchema.editChildSchema,
     handler:async (request, reply)=>{
-      
     }
   }
 };

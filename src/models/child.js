@@ -32,7 +32,7 @@ export const childSchema = {
         momcid: constraint.PID(),
         childcid: constraint.CID(),
         childpid: constraint.PID(),
-        childhospcode: constraint.HOSPCODE(),
+        childhospcode:{type: "string"},// constraint.HOSPCODE(),
         childname: { type: "string" },
         datepickerchild: constraint.DATE(),
         sexchild: constraint.SEX(),
