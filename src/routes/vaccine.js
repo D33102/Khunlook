@@ -4,7 +4,6 @@ export function vaccineRoute(fastify, options, done) {
   fastify.post(
     "/information",
     {
-      preValidation: [fastify.authenticate],
       schema: vaccineController.getVaccinesInfo.schema,
     },
     vaccineController.getVaccinesInfo.handler

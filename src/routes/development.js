@@ -4,7 +4,6 @@ export function developmentRoute(fastify, options, done) {
   fastify.post(
     "/information",
     {
-      preValidation: [fastify.authenticate],
       schema: developmentController.getInformationDevelopment.schema,
     },
     developmentController.getInformationDevelopment.handler

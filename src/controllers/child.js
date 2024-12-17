@@ -22,7 +22,6 @@ export const childController = {
         console.log(rows);
         return reply.code(200).send({
           message: `get child of user ${user_id} success`,
-          message: `get child of user ${user_id} success`,
           data: rows,
           success: 1,
         });
