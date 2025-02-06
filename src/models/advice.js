@@ -18,7 +18,12 @@ export const adviceSchema = {
             success: { type: "boolean" },
             message: { type: "string" },
             data: {
-                type: "array"
+                type: "object",
+                properties:{
+                  CODE:{type: "string"},
+                  AGE_MONTH_DESCRIPTION:{type: "string"},
+                  INFORMATION: {type:"string"}
+                }
               },
           },
           required: ["success", "message", "data"],

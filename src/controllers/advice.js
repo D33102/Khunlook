@@ -20,11 +20,11 @@ export const adviceController = {
                     error: "query not found"
                 })
               }
-              console.log(rows)
+              console.log(rows[0])
               return reply.status(200).send({
                 success:true,
                 message:"query proper advice success",
-                data: rows
+                data: rows[0]
               })
 
         }
