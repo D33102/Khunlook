@@ -2,7 +2,7 @@ import { constraint } from "../utils/parameter.js";
 export const childSchema = {
   getChildSchema: {
     description: "Get children of the specific userid",
-    tags: ["child"],
+    tags: ["Child"],
     response: {
       200: {
         type: "object",
@@ -25,14 +25,14 @@ export const childSchema = {
   },
   addChildSchema: {
     description: "Add child Development",
-    tags: ["child"],
+    tags: ["Child"],
     body: {
       type: "object",
       properties: {
         momcid: constraint.PID(),
         childcid: constraint.CID(),
         childpid: constraint.PID(),
-        childhospcode:{type: "string"},// constraint.HOSPCODE(),
+        childhospcode: { type: "string" }, // constraint.HOSPCODE(),
         childname: { type: "string" },
         datepickerchild: constraint.DATE(),
         sexchild: constraint.SEX(),
@@ -66,9 +66,9 @@ export const childSchema = {
       },
     },
   },
-  editChildSchema:{
+  editChildSchema: {
     description: "Add child Development",
-    tags: ["child"],
+    tags: ["Child"],
     body: {
       type: "object",
       properties: {
@@ -108,5 +108,5 @@ export const childSchema = {
         required: ["message"],
       },
     },
-  }
+  },
 };
