@@ -22,7 +22,7 @@ export const summaryController = {
             .send({ success: false, message: "Missing required fields" });
         }
 
-        date_serv = convertThaiDatetoStd(date_serv);
+        const formattedDate = convertThaiDatetoStd(date_serv);
 
         const query = `
       INSERT INTO SUMMARY_INFO (HOSPCODE, PID, DATE_SERV, AGE, EVALUATION_TYPE, EVALUATION_RESULT)
@@ -33,7 +33,7 @@ export const summaryController = {
         EVALUATION_RESULT = VALUES(EVALUATION_RESULT);
     `;
 
-        await request.server.execute(query, [
+        await request.server.mysql.execute(query, [
           hospcode,
           pid,
           formattedDate,
