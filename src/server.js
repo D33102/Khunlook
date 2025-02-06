@@ -13,6 +13,8 @@ import { developmentRoute } from "./routes/development.js";
 import { growthRoute } from "./routes/growth.js";
 import { childRoute } from "./routes/child.js";
 import { adviceRoute } from "./routes/advice.js";
+import { nutritionController } from "./controllers/nutrition.js";
+import { nutritionRoute } from "./routes/nutrition.js";
 
 dotenv.config();
 
@@ -65,6 +67,7 @@ fastify.register(
     apiV1Routes.register(growthRoute, { prefix: "/growth" });
     apiV1Routes.register(childRoute, { prefix: "/child" });
     apiV1Routes.register(adviceRoute, {prefix: "/advice"})
+    apiV1Routes.register(nutritionRoute, {prefix: "/nutrition"})
   },
   { prefix: "/api/v1" }
 );
