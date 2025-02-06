@@ -5,42 +5,42 @@ services:
     image: mysql/mysql-server:latest
     container_name: mysql
     ports:
-      - "3306:3306"
+      - "3307:3306"
     expose:
-      - "3306"
+      - "3307"
     environment:
       MYSQL_USER: root
       MYSQL_PASSWORD: 1234
       MYSQL_ROOT_PASSWORD: 1234
       MYSQL_DATABASE: APPDEK032022
       MYSQL_ROOT_HOST: app
-      MYSQL_PORT: 3306
+      MYSQL_PORT: 3307
     volumes:
       - ./mysql-data:/var/lib/mysql
       - ./init.sql:/docker-entrypoint-initdb.d/init.sql
-    networks:
-      - khunlook
+#     networks:
+#       - khunlook
 
-  app:
-    build:
-      context: .
-      dockerfile: Dockerfile
-    ports:
-      - "3002:3002"
-    expose:
-      - "3002"
-    environment:
-      NODE_ENV: development
-      MYSQL_HOST: mysql
-      MYSQL_DATABASE: APPDEK032022
-      MYSQL_ROOT_PASSWORD: 1234
-      MYSQL_USER: root
-      MYSQL_PASSWORD: 1234
-      MYSQL_PORT: 3306
-    networks:
-      - khunlook
-    restart: on-failure:10
+#   app:
+#     build:
+#       context: .
+#       dockerfile: Dockerfile
+#     ports:
+#       - "3002:3002"
+#     expose:
+#       - "3002"
+#     environment:
+#       NODE_ENV: development
+#       MYSQL_HOST: mysql
+#       MYSQL_DATABASE: APPDEK032022
+#       MYSQL_ROOT_PASSWORD: 1234
+#       MYSQL_USER: root
+#       MYSQL_PASSWORD: 1234
+#       MYSQL_PORT: 3306
+#     networks:
+#       - khunlook
+#     restart: on-failure:10
 
-networks:
-  khunlook:
-    external: true
+# networks:
+#   khunlook:
+#     external: true
