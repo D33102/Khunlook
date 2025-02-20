@@ -19,7 +19,6 @@ export function growthRoute(fastify, options, done) {
   fastify.post(
     "/query-result",
     {
-      preValidation: [fastify.authenticate],
       schema: growthController.growthQueryResult.schema,
     },
     growthController.growthQueryResult.handler

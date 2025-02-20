@@ -112,21 +112,33 @@ export const growthController = {
   growthQueryResult: {
     schema: growthSchema.growthQueryResultSchema,
     handler: async (request, reply) => {
-      const {
+      let {
         sex,
         typeGraph,
-        maxFirstGl,
-        minFirstGl,
-        maxSecondGl,
-        minSecondGl,
-        maxThirdGl,
-        minThirdGl,
+        maxFirstGL,
+        minFirstGL,
+        maxSecondGL,
+        minSecondGL,
+        maxThirdGL,
+        minThirdGL,
         HC_WHO = -1,
         HC = -1,
       } = request.body;
       let query = "";
       const rows1 = [];
-
+      sex = parseInt(sex);
+      console.log({
+        sex,
+        typeGraph,
+        maxFirstGL,
+        minFirstGL,
+        maxSecondGL,
+        minSecondGL,
+        maxThirdGL,
+        minThirdGL,
+        HC_WHO,
+        HC,
+      });
       switch (typeGraph) {
         case 0:
           query = "SELECT * FROM `GL_GROWTH_CHILD_AGE_WHO`";
@@ -241,7 +253,7 @@ export const growthController = {
       }
 
       if (query) {
-        const result = await mysqli.query(query);
+        const result = await request.server.mysql.query(query);
         rows1.push(...result);
       }
       reply
