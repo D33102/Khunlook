@@ -116,7 +116,7 @@ export const growthSchema = {
       type: "object",
       properties: {
         sex: constraint.SEX(),
-        typeGraph: { type: "number", minimum: 1, maximum: 10 },
+        typeGraph: { type: "number", minimum: 0, maximum: 10 },
         maxFirstGL: { type: "number" },
         minFirstGL: { type: "number" },
         maxSecondGL: { type: "number" },
