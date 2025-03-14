@@ -87,7 +87,6 @@ export const summaryController = {
     `;
         const [result] = await request.server.mysql.query(query, [childpid]);
 
-        console.log(result);
         return reply.status(200).send({ success: true, content: result });
       } catch (err) {
         request.server.log.error(err);

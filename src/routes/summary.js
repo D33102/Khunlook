@@ -13,7 +13,7 @@ export function summaryRoute(fastify, options, done) {
   fastify.post(
     "/info/get-information",
     {
-      // preValidation: [fastify.authenticate],
+      preValidation: [fastify.authenticate],
       schema: summaryController.infoGetInformation.schema,
     },
     summaryController.infoGetInformation.handler
