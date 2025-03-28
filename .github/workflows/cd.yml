@@ -7,13 +7,23 @@ on:
       - completed
 
 jobs:
-  build:
+  deploy:
     runs-on: self-hosted
 
     steps:
-      - name: Pull Docker image
+      - name: Login to DockerHub
+        env:
+          DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
+          DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
+        run: echo "${DOCKER_PASSWORD}" | sudo docker login -u "${DOCKER_USERNAME}" --password-stdin
+
+      - name: Pull latest Docker image
         run: sudo docker pull d33102/khunlook:latest
-      - name: Delete Old docker container
-        run: sudo docker rm -rf khunlook-container || true
-      - name: Run Docker Container
-        run: sudo docker run -d -p 8080:8080 --name khunlook-container d33102/khunlook
+
+      - name: Stop and remove old Docker container (if exists)
+        run: |
+          sudo docker stop khunlook-container || true
+          sudo docker rm khunlook-container || true
+
+      - name: Run new Docker container
+        run: sudo docker run -d -p 8080:8080 --name khunlook-container d33102/khunlook:latest
