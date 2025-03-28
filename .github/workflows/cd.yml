@@ -28,3 +28,11 @@ jobs:
 
       - name: Start new containers
         run: sudo docker-compose up -d --build
+
+      - name: MySQL Remote Access
+        run: |
+          sleep 10
+          sudo docker exec mysql mysql -u root -p${{ secrets.SQL_PASSWORD }} -e "
+          ALTER USER 'root'@'%' IDENTIFIED WITH mysql_native_password BY '${{ secrets.SQL_PASSWORD }}';
+          GRANT ALL PRIVILEGES ON *.* TO 'root'@'%' WITH GRANT OPTION;
+          FLUSH PRIVILEGES;"
