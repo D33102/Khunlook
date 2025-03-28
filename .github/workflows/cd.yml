@@ -27,4 +27,4 @@ jobs:
         run: sudo docker-compose down -v
 
       - name: Start new containers
-        run: sudo docker-compose up -d --build
+        run: sudo docker-compose up --build -d
