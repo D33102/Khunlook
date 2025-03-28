@@ -1,25 +1,22 @@
-name: Docker Image CI
+name: CI Pipeline
 
 on:
   push:
-    branches: [ "main" ]
+    branches: ["main"]
 
 jobs:
   build:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-
-      - name: Login to DockerHub
+      - uses: actions/checkout@v4
+      - name: Login Dockerhub
         env:
-          DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
-          DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
-        run: echo "${DOCKER_PASSWORD}" | docker login -u "${DOCKER_USERNAME}" --password-stdin
+          DOCKER_USERNAME: ${{secrets.DOCKER_USERNAME}}
+          DOCKER_PASSWORD: ${{secrets.DOCKER_PASSWORD}}
+        run: docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD
 
       - name: Build the Docker image
-        run: docker build -t d33102/khunlook:latest .
-
-      - name: Push to DockerHub
-        run: docker push d33102/khunlook:latest
+        run: docker build -t Khunlook .
+      - name: Push to Dockerhub
+        run: docker push D33102/Khunlook:latest
