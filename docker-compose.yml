@@ -4,6 +4,7 @@ services:
   mysql:
     image: mysql/mysql-server:latest
     container_name: mysql
+    restart: always
     ports:
       - "3306:3306"
     environment:
@@ -19,6 +20,8 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
+    container_name: app
+    restart: on-failure:10
     ports:
       - "3002:3002"
     environment:
@@ -27,12 +30,11 @@ services:
       MYSQL_DATABASE: APPDEK032022
       MYSQL_USER: root
       MYSQL_PASSWORD: 1234
-    networks:
-      - khunlook
     depends_on:
       - mysql
-    restart: on-failure:10
+    networks:
+      - khunlook
 
 networks:
   khunlook:
-    external: true
+    driver: bridge
