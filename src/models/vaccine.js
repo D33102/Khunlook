@@ -10,7 +10,7 @@ export const vaccineSchema = {
       properties: {
         childpid: constraint.PID(),
         isinplan: constraint.IN_PLAN(),
-        loggedin: { type: "integer" },
+        loggedin: { type: "integer", minimum: 0, maximum: 1 },
         previous_chosen: { type: "string", nullable: true },
       },
     },
@@ -139,7 +139,7 @@ export const vaccineSchema = {
       200: {
         type: "object",
         properties: {
-          content: {
+          data: {
             type: "array",
             items: {
               type: "object",
@@ -151,7 +151,7 @@ export const vaccineSchema = {
             },
           },
         },
-        required: ["content"],
+        required: ["data"],
       },
       400: {
         type: "object",

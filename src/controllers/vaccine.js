@@ -17,22 +17,22 @@ export const vaccineController = {
 
       // SQL query for fetching vaccine types
       const query1 = `
-          SELECT CODE, DESCRIPTION, DESCRIPTION_TH, DESCRIPTION_TABLE, AGE, AGE_MAX, DISEASE, GRP_NAME, IN_PLAN, INFORMATION, WEB_GRP_NAME, WEB_GRP_ORDER 
-          FROM CODE_EPI_VACCINETYPE 
-          WHERE (IN_PLAN = ? ${queryAppend}) AND CHILD_VACCINE = 1 
+          SELECT CODE, DESCRIPTION, DESCRIPTION_TH, DESCRIPTION_TABLE, AGE, AGE_MAX, DISEASE, GRP_NAME, IN_PLAN, INFORMATION, WEB_GRP_NAME, WEB_GRP_ORDER
+          FROM CODE_EPI_VACCINETYPE
+          WHERE (IN_PLAN = ? ${queryAppend}) AND CHILD_VACCINE = 1
           ORDER BY WEB_GRP_ORDER ASC`;
 
       // SQL query for fetching historical data
       const query2 = `
-          SELECT CODE_EPI_VACCINETYPE.DESCRIPTION, CODE_EPI_VACCINETYPE.DESCRIPTION_TH, CODE_EPI_VACCINETYPE.DESCRIPTION_TABLE, CODE_EPI_VACCINETYPE.IN_PLAN, 
-                 EPI.VACCINETYPE, EPI.DATE_SERV, CODE_EPI_VACCINETYPE.CODE, CODE_EPI_VACCINETYPE.WEB_GRP_NAME, CODE_EPI_VACCINETYPE.WEB_GRP_ORDER, 
-                 CODE_EPI_VACCINETYPE.GRP_NAME, CODE_EPI_VACCINETYPE.AGE, CODE_EPI_VACCINETYPE.AGE_MAX, CODE_HOSPITAL.HOSPITAL, CODE_HOSPITAL.HOSPITALCODE, 
-                 EPI_ADDITIONAL.AGE_MONTH 
-          FROM EPI 
-          LEFT JOIN CODE_EPI_VACCINETYPE ON EPI.VACCINETYPE = CODE_EPI_VACCINETYPE.CODE 
-          LEFT JOIN CODE_HOSPITAL ON EPI.VACCINEPLACE = CODE_HOSPITAL.HOSPITALCODE 
-          LEFT JOIN EPI_ADDITIONAL ON EPI.VACCINETYPE = EPI_ADDITIONAL.VACCINETYPE AND EPI.DATE_SERV = EPI_ADDITIONAL.DATE_SERV 
-          WHERE (EPI.PID = ? OR EPI_ADDITIONAL.PID = ?) AND CODE_EPI_VACCINETYPE.IN_PLAN = ? 
+          SELECT CODE_EPI_VACCINETYPE.DESCRIPTION, CODE_EPI_VACCINETYPE.DESCRIPTION_TH, CODE_EPI_VACCINETYPE.DESCRIPTION_TABLE, CODE_EPI_VACCINETYPE.IN_PLAN,
+                 EPI.VACCINETYPE, EPI.DATE_SERV, CODE_EPI_VACCINETYPE.CODE, CODE_EPI_VACCINETYPE.WEB_GRP_NAME, CODE_EPI_VACCINETYPE.WEB_GRP_ORDER,
+                 CODE_EPI_VACCINETYPE.GRP_NAME, CODE_EPI_VACCINETYPE.AGE, CODE_EPI_VACCINETYPE.AGE_MAX, CODE_HOSPITAL.HOSPITAL, CODE_HOSPITAL.HOSPITALCODE,
+                 EPI_ADDITIONAL.AGE_MONTH
+          FROM EPI
+          LEFT JOIN CODE_EPI_VACCINETYPE ON EPI.VACCINETYPE = CODE_EPI_VACCINETYPE.CODE
+          LEFT JOIN CODE_HOSPITAL ON EPI.VACCINEPLACE = CODE_HOSPITAL.HOSPITALCODE
+          LEFT JOIN EPI_ADDITIONAL ON EPI.VACCINETYPE = EPI_ADDITIONAL.VACCINETYPE AND EPI.DATE_SERV = EPI_ADDITIONAL.DATE_SERV
+          WHERE (EPI.PID = ? OR EPI_ADDITIONAL.PID = ?) AND CODE_EPI_VACCINETYPE.IN_PLAN = ?
           ORDER BY EPI_ADDITIONAL.DATE_SERV`;
 
       try {
@@ -129,14 +129,13 @@ export const vaccineController = {
     schema: vaccineSchema.vaccineGetHospitalSchema,
     handler: async (request, reply) => {
       const { search, momcid } = request.body;
-
       // SQL query to fetch hospital data based on search criteria
       const query = `
-          SELECT CODE_HOSPITAL.HOSPITALCODE AS id, CODE_HOSPITAL.HOSPITAL AS text 
-          FROM CODE_HOSPITAL 
-          LEFT JOIN USER_HOSPITAL ON CODE_HOSPITAL.HOSPITALCODE = USER_HOSPITAL.HOSPITALCODE 
-          WHERE (CODE_HOSPITAL.STANDARD = 1 AND CODE_HOSPITAL.HOSPITAL LIKE ?) 
-          OR (CODE_HOSPITAL.STANDARD = 0 AND USER_HOSPITAL.CID = ? AND CODE_HOSPITAL.HOSPITAL LIKE ?) 
+          SELECT CODE_HOSPITAL.HOSPITALCODE AS id, CODE_HOSPITAL.HOSPITAL AS text
+          FROM CODE_HOSPITAL
+          LEFT JOIN USER_HOSPITAL ON CODE_HOSPITAL.HOSPITALCODE = USER_HOSPITAL.HOSPITALCODE
+          WHERE (CODE_HOSPITAL.STANDARD = 1 AND CODE_HOSPITAL.HOSPITAL LIKE ?)
+          OR (CODE_HOSPITAL.STANDARD = 0 AND USER_HOSPITAL.CID = ? AND CODE_HOSPITAL.HOSPITAL LIKE ?)
           LIMIT 150
         `;
 
@@ -149,7 +148,8 @@ export const vaccineController = {
         ]);
 
         // Send the response
-        return reply.send({ content: result });
+
+        return reply.send({ data: result });
       } catch (err) {
         request.server.log.error(err);
         return reply
@@ -184,8 +184,8 @@ export const vaccineController = {
       try {
         // Update record in EPI table
         const query1 = `
-            UPDATE EPI 
-            SET VACCINEPLACE = ?, DATE_SERV = ?, D_UPDATE = ? 
+            UPDATE EPI
+            SET VACCINEPLACE = ?, DATE_SERV = ?, D_UPDATE = ?
             WHERE PID = ? AND VACCINETYPE = ? AND DATE_SERV = ?
           `;
         await request.server.mysql.execute(query1, [
@@ -200,8 +200,8 @@ export const vaccineController = {
         // If months is provided, update the EPI_ADDITIONAL table
         if (months) {
           const query2 = `
-              UPDATE EPI_ADDITIONAL 
-              SET DATE_SERV = ? 
+              UPDATE EPI_ADDITIONAL
+              SET DATE_SERV = ?
               WHERE PID = ? AND VACCINETYPE = ? AND AGE_MONTH = ?
             `;
           await request.server.mysql.execute(query2, [

@@ -66,9 +66,9 @@ fastify.register(
     apiV1Routes.register(growthRoute, { prefix: "/growth" });
     apiV1Routes.register(childRoute, { prefix: "/child" });
     apiV1Routes.register(summaryRoute, { prefix: "/summary" });
-    apiV1Routes.register(adviceRoute, {prefix: "/advice"})
+    apiV1Routes.register(adviceRoute, { prefix: "/advice" });
   },
-  { prefix: "/api/v1" }
+  { prefix: "/api/v1" },
 );
 
 const PORT = parseInt(process.env.PORT) || 3002;

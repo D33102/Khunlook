@@ -6,16 +6,16 @@ export function vaccineRoute(fastify, options, done) {
     {
       schema: vaccineController.getVaccinesInfo.schema,
     },
-    vaccineController.getVaccinesInfo.handler
+    vaccineController.getVaccinesInfo.handler,
   );
 
   fastify.post(
     "/hospitals",
     {
-      preValidation: [fastify.authenticate],
+      // preValidation: [fastify.authenticate],
       schema: vaccineController.vaccineHospital.schema,
     },
-    vaccineController.vaccineHospital.handler
+    vaccineController.vaccineHospital.handler,
   );
 
   fastify.post(
@@ -24,7 +24,7 @@ export function vaccineRoute(fastify, options, done) {
       preValidation: [fastify.authenticate],
       schema: vaccineController.createVaccine.schema,
     },
-    vaccineController.createVaccine.handler
+    vaccineController.createVaccine.handler,
   );
 
   fastify.put(
@@ -33,7 +33,7 @@ export function vaccineRoute(fastify, options, done) {
       preValidation: [fastify.authenticate],
       schema: vaccineController.updateVaccine.schema,
     },
-    vaccineController.updateVaccine.handler
+    vaccineController.updateVaccine.handler,
   );
 
   fastify.delete(
@@ -42,7 +42,7 @@ export function vaccineRoute(fastify, options, done) {
       preValidation: [fastify.authenticate],
       schema: vaccineController.deleteVaccine.schema,
     },
-    vaccineController.deleteVaccine.handler
+    vaccineController.deleteVaccine.handler,
   );
 
   done();
