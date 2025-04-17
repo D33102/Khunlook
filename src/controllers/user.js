@@ -6,36 +6,51 @@ export const userController = {
   userRegister: {
     schema: userSchema.userRegisterSchema,
     handler: async (request, reply) => {
+      const connection = await request.server.mysql.getConnection();
       try {
-        const { NAME, USERNAME, PASSWORD, EMAIL, PHONE_NUMBER } = request.body;
+        const { NAME, USERNAME, PASSWORD, EMAIL, PHONE_NUMBER, CID } = request.body;
 
-        const [existingUser] = await request.server.mysql.execute(
-          "SELECT * FROM USER WHERE `USERNAME`= ? OR `EMAIL`= ?",
-          [USERNAME, EMAIL]
+        const [existingUser] = await connection.execute(
+          "SELECT * FROM USER WHERE `USERNAME` = ? OR `EMAIL` = ? OR `CID` = ?",
+          [USERNAME, EMAIL, CID]
         );
+
         if (existingUser.length > 0) {
-          return reply
-            .status(400)
-            .send({ message: "Username or email already exists" });
+          connection.release();
+          return reply.status(400).send({ message: "Username, email or CID already exists" });
         }
+
+        await connection.beginTransaction();
 
         const hashedPassword = await bcrypt.hash(PASSWORD, 10);
         const PID = await generateUniquePID(request);
 
-        const [result] = await request.server.mysql.execute(
+        const [personResult] = await connection.execute(
           "INSERT INTO PERSON (`NAME`, `PID`) VALUES (?, ?)",
           [NAME, PID]
         );
+        const ID = personResult.insertId;
 
-        const ID = result.insertId;
-
-        await request.server.mysql.execute(
-          "INSERT INTO USER (`ID`, `NAME`, `USERNAME`, `PASSWORD`, `EMAIL`, `PHONE_NUMBER`) VALUES (?, ?, ?, ?, ?, ?)",
-          [ID, NAME, USERNAME, hashedPassword, EMAIL, PHONE_NUMBER]
+        await connection.execute(
+          "INSERT INTO USER (`ID`, `NAME`, `USERNAME`, `CID`, `PASSWORD`, `EMAIL`, `PHONE_NUMBER`) VALUES (?, ?, ?, ?, ?, ?, ?)",
+          [ID, NAME, USERNAME, CID, hashedPassword, EMAIL, PHONE_NUMBER]
         );
 
-        return reply.status(200).send({ message: "successfully registered" });
+        const now = new Date();
+        const formattedDate = now.toISOString().slice(0, 19).replace('T', ' ');
+        
+        await connection.execute(
+          "INSERT INTO USER_CID (`ID`, `USERNAME`, `CID`, `D_UPDATE`) VALUES (?, ?, ?, ?)",
+          [ID, USERNAME, CID, formattedDate]
+        );
+
+        await connection.commit();
+        connection.release();
+
+        return reply.status(200).send({ message: "Successfully registered" });
       } catch (err) {
+        await connection.rollback();
+        connection.release();
         request.server.log.error(err);
         return reply.status(500).send({ message: "Internal Server Error" });
       }
