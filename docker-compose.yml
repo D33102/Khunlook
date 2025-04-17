@@ -23,7 +23,7 @@ services:
     container_name: app
     restart: on-failure:10
     ports:
-      - "3002:3002"
+      - "3003:3003"
     environment:
       NODE_ENV: development
       MYSQL_HOST: mysql
