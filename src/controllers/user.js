@@ -22,16 +22,17 @@ export const userController = {
 
         await connection.beginTransaction();
 
-        const hashedPassword = await bcrypt.hash(PASSWORD, 10);
         const PID = await generateUniquePID(request);
-        const ID = personResult.insertId;
         const now = new Date();
         const formattedDate = now.toISOString().slice(0, 19).replace('T', ' ');
-
+        
         const [personResult] = await connection.execute(
-          "INSERT INTO PERSON (`NAME`, `PID`, `CID`, `ID`, `D_UPDATE`) VALUES (?, ?, ?, ?, ?)",
-          [NAME, PID, CID, ID, formattedDate]
+          "INSERT INTO PERSON (`NAME`, `PID`, `CID`, `D_UPDATE`) VALUES (?, ?, ?, ?)",
+          [NAME, PID, CID, formattedDate]
         );
+
+        const hashedPassword = await bcrypt.hash(PASSWORD, 10);
+        const ID = personResult.insertId;
 
         await connection.execute(
           "INSERT INTO USER (`ID`, `NAME`, `USERNAME`, `CID`, `PASSWORD`, `EMAIL`, `PHONE_NUMBER`) VALUES (?, ?, ?, ?, ?, ?, ?)",
