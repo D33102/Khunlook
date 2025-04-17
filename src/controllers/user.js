@@ -24,20 +24,19 @@ export const userController = {
 
         const hashedPassword = await bcrypt.hash(PASSWORD, 10);
         const PID = await generateUniquePID(request);
+        const ID = personResult.insertId;
+        const now = new Date();
+        const formattedDate = now.toISOString().slice(0, 19).replace('T', ' ');
 
         const [personResult] = await connection.execute(
-          "INSERT INTO PERSON (`NAME`, `PID`) VALUES (?, ?)",
-          [NAME, PID]
+          "INSERT INTO PERSON (`NAME`, `PID`, `CID`, `ID`, `D_UPDATE`) VALUES (?, ?, ?, ?, ?)",
+          [NAME, PID, CID, ID, formattedDate]
         );
-        const ID = personResult.insertId;
 
         await connection.execute(
           "INSERT INTO USER (`ID`, `NAME`, `USERNAME`, `CID`, `PASSWORD`, `EMAIL`, `PHONE_NUMBER`) VALUES (?, ?, ?, ?, ?, ?, ?)",
           [ID, NAME, USERNAME, CID, hashedPassword, EMAIL, PHONE_NUMBER]
         );
-
-        const now = new Date();
-        const formattedDate = now.toISOString().slice(0, 19).replace('T', ' ');
         
         await connection.execute(
           "INSERT INTO USER_CID (`ID`, `USERNAME`, `CID`, `D_UPDATE`) VALUES (?, ?, ?, ?)",
