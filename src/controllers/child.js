@@ -54,6 +54,7 @@ export const childController = {
         lowbtweigth,
         birthAsphyxia,
       } = request.body;
+
       childpid = await generateUniquePID(request);
       childcid = 99999;
       let childga = isNaN(gaweek) ? null : gaweek;
