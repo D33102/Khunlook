@@ -1,5 +1,6 @@
 import { vaccineSchema } from "../models/vaccine.js";
 import { convertThaiDatetoStd } from "../utils/date.js";
+import { generateUniqueHOSP } from "../utils/generator.js";
 
 export const vaccineController = {
   getVaccinesInfo: {
@@ -155,6 +156,60 @@ export const vaccineController = {
         return reply
           .code(500)
           .send({ success: 0, error: "Database query failed" });
+      }
+    },
+  },
+  saveClinic: {
+    schema: vaccineSchema.vaccineSaveClinicSchema,
+    handler: async (request, reply) => {
+      const { clinicname, momcid } = request.body;
+      const checkQuery = `
+        SELECT CODE_HOSPITAL.HOSPITAL 
+        FROM CODE_HOSPITAL 
+        LEFT JOIN USER_HOSPITAL ON CODE_HOSPITAL.HOSPITALCODE = USER_HOSPITAL.HOSPITALCODE 
+        WHERE (CODE_HOSPITAL.STANDARD = 1 AND CODE_HOSPITAL.HOSPITAL = ?) 
+        OR (CODE_HOSPITAL.STANDARD = 0 AND USER_HOSPITAL.CID = ? AND CODE_HOSPITAL.HOSPITAL = ?)
+      `;
+
+      try {
+        const [checkResult] = await request.server.mysql.execute(checkQuery, [
+          clinicname,
+          momcid,
+          clinicname,
+        ]);
+
+        if (checkResult.length > 0) {
+          return reply.send({ success: 0 });
+        }
+        const randhospcode = await generateUniqueHOSP(request);
+        const insertClinicQuery = `
+          INSERT INTO CODE_HOSPITAL (HOSPITALCODE, HOSPITAL, STANDARD) 
+          VALUES (?, ?, 0)
+        `;
+        await request.server.mysql.execute(insertClinicQuery, [
+          randhospcode,
+          clinicname,
+        ]);
+
+        const insertUserClinicQuery = `
+          INSERT INTO USER_HOSPITAL (CID, HOSPITALCODE) 
+          VALUES (?, ?)
+        `;
+        await request.server.mysql.execute(insertUserClinicQuery, [
+          momcid,
+          randhospcode,
+        ]);
+
+        return reply.send({
+          success: 1,
+          id: randhospcode,
+          text: clinicname,
+        });
+      } catch (error) {
+        request.server.log.error(error);
+        return reply
+          .code(500)
+          .send({ success: 0, error: "Database operation failed" });
       }
     },
   },

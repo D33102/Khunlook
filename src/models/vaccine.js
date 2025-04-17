@@ -163,6 +163,36 @@ export const vaccineSchema = {
       },
     },
   },
+  vaccineSaveClinicSchema: {
+    description: "Check and Save Clinic",
+    tags: ["Clinic"],
+    body: {
+      type: "object",
+      required: ["clinicname", "momcid"],
+      properties: {
+        clinicname: { type: "string" },
+        momcid: { type: "string" },
+      },
+    },
+    response: {
+      200: {
+        type: "object",
+        properties: {
+          success: { type: "integer" },
+          id: { type: "string", nullable: true },
+          text: { type: "string", nullable: true },
+        },
+        required: ["success"],
+      },
+      500: {
+        type: "object",
+        properties: {
+          success: { type: "integer" },
+          error: { type: "string" },
+        },
+      },
+    },
+  },
   vaccineDeleteSchema: {
     description: "Vaccine",
     tags: ["Vaccine"],

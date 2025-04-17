@@ -17,6 +17,14 @@ export function vaccineRoute(fastify, options, done) {
     },
     vaccineController.vaccineHospital.handler
   );
+  fastify.post(
+    "/clinic-save",
+    {
+      // preValidation:[fastify.authenticate],
+      schema: vaccineController.saveClinic.schema
+    },
+    vaccineController.saveClinic.handler
+  )
 
   fastify.post(
     "/create",
