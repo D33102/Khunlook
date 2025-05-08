@@ -7,7 +7,7 @@ export const userSchema = {
       properties: {
         NAME: { type: "string", maxLength: 100 },
         USERNAME: { type: "string", maxLength: 20, pattern: "^[a-zA-Z0-9]+$" },
-        CID: {type: "string", minLength: 13, maxLength: 13, pattern: "^[0-9]"}, 
+        CID: {type: "string", minLength: 13, maxLength: 13, pattern: "^[0-9]+$"}, 
         PASSWORD: { type: "string", minLength: 6 },
         EMAIL: { type: "string", format: "email" },
         PHONE_NUMBER: {type: "string"},
