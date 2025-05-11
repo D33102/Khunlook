@@ -8,7 +8,8 @@ export const userController = {
     handler: async (request, reply) => {
       const connection = await request.server.mysql.getConnection();
       try {
-        const { NAME, USERNAME, PASSWORD, EMAIL, PHONE_NUMBER, CID } = request.body;
+        const { NAME, USERNAME, PASSWORD, EMAIL, PHONE_NUMBER, CID } =
+          request.body;
 
         const [existingUser] = await connection.execute(
           "SELECT * FROM USER WHERE `USERNAME` = ? OR `EMAIL` = ? OR `CID` = ?",
@@ -17,15 +18,17 @@ export const userController = {
 
         if (existingUser.length > 0) {
           connection.release();
-          return reply.status(400).send({ message: "Username, email or CID already exists" });
+          return reply
+            .status(400)
+            .send({ message: "Username, email or CID already exists" });
         }
 
         await connection.beginTransaction();
 
         const PID = await generateUniquePID(request);
         const now = new Date();
-        const formattedDate = now.toISOString().slice(0, 19).replace('T', ' ');
-        
+        const formattedDate = now.toISOString().slice(0, 19).replace("T", " ");
+
         const [personResult] = await connection.execute(
           "INSERT INTO PERSON (`NAME`, `PID`, `CID`, `D_UPDATE`) VALUES (?, ?, ?, ?)",
           [NAME, PID, CID, formattedDate]
@@ -38,7 +41,7 @@ export const userController = {
           "INSERT INTO USER (`ID`, `NAME`, `USERNAME`, `CID`, `PASSWORD`, `EMAIL`, `PHONE_NUMBER`) VALUES (?, ?, ?, ?, ?, ?, ?)",
           [ID, NAME, USERNAME, CID, hashedPassword, EMAIL, PHONE_NUMBER]
         );
-        
+
         await connection.execute(
           "INSERT INTO USER_CID (`ID`, `USERNAME`, `CID`, `D_UPDATE`) VALUES (?, ?, ?, ?)",
           [ID, USERNAME, CID, formattedDate]

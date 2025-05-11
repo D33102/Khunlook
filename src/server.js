@@ -24,7 +24,7 @@ const fastify = Fastify({
 });
 
 await fastify.register(cors, {
-  origin: ["http://localhost:3000", "http://localhost:3002"], // Allow requests from Next.js app
+  origin: ["*"],
   methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
 });
 
@@ -66,12 +66,12 @@ fastify.register(
     apiV1Routes.register(growthRoute, { prefix: "/growth" });
     apiV1Routes.register(childRoute, { prefix: "/child" });
     apiV1Routes.register(summaryRoute, { prefix: "/summary" });
-    apiV1Routes.register(adviceRoute, {prefix: "/advice"})
+    apiV1Routes.register(adviceRoute, { prefix: "/advice" });
   },
   { prefix: "/api/v1" }
 );
 
-const PORT = parseInt(process.env.PORT) || 3002;
+const PORT = parseInt(process.env.PORT) || 3003;
 
 const start = async () => {
   try {
