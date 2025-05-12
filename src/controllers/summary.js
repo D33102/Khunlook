@@ -98,8 +98,8 @@ export const summaryController = {
       }
     },
   },
-  developmentInfo: {
-    schema: summarySchema.developmentInfoSchema,
+  developmentAndVaccineInfo: {
+    schema: summarySchema.developmentAndVaccineInfoSchema,
     handler: async (request, reply) => {
       try {
         const {
@@ -113,6 +113,10 @@ export const summaryController = {
           tableName,
           childlowbtweigth,
         } = request.body;
+        // Vaccine parameters
+        const { loggedin: vaccineLoggedIn } = request.body;
+        let vaccineContent = [],
+          vaccineHistory = [];
 
         // Validate numeric ageMin and ageMax
         if (isNaN(ageMin) || isNaN(ageMax)) {
@@ -392,118 +396,49 @@ export const summaryController = {
           rows3 = personResult;
         }
 
+        // Fetch vaccine content
+        {
+          let queryAppend = "";
+          const vaccineQuery = `
+            SELECT CODE, DESCRIPTION, DESCRIPTION_TH, DESCRIPTION_TABLE,
+                   AGE, AGE_MAX, DISEASE, GRP_NAME, IN_PLAN,
+                   INFORMATION, WEB_GRP_NAME, WEB_GRP_ORDER
+            FROM CODE_EPI_VACCINETYPE
+            WHERE CHILD_VACCINE = 1
+            ORDER BY WEB_GRP_ORDER ASC
+          `;
+          const [vaccineRows] = await db.query(vaccineQuery);
+          vaccineContent = vaccineRows;
+        }
+        // Fetch vaccine history if logged in
+        if (vaccineLoggedIn == 1 && childpid) {
+          const historyQuery = `
+            SELECT c.DESCRIPTION, c.DESCRIPTION_TH, c.DESCRIPTION_TABLE, c.IN_PLAN,
+                   e.VACCINETYPE, e.DATE_SERV, c.CODE, c.WEB_GRP_NAME, c.WEB_GRP_ORDER,
+                   c.GRP_NAME, c.AGE, c.AGE_MAX, h.HOSPITAL, h.HOSPITALCODE, a.AGE_MONTH
+            FROM EPI e
+            LEFT JOIN CODE_EPI_VACCINETYPE c ON e.VACCINETYPE = c.CODE
+            LEFT JOIN CODE_HOSPITAL h ON e.VACCINEPLACE = h.HOSPITALCODE
+            LEFT JOIN EPI_ADDITIONAL a ON e.VACCINETYPE = a.VACCINETYPE AND e.DATE_SERV = a.DATE_SERV
+            WHERE (e.PID = ? OR a.PID = ?)
+            ORDER BY a.DATE_SERV
+          `;
+          const [vaccineHistoryRows] = await db.query(historyQuery, [
+            childpid,
+            childpid,
+          ]);
+          vaccineHistory = vaccineHistoryRows;
+        }
         if (rows1.length > 0 || rows2.length > 0) {
           return reply.send({
             success: 1,
-            content: rows1,
-            history: rows2,
-            GA,
-            person: rows3,
+            development: { content: rows1, history: rows2, GA, person: rows3 },
+            vaccine: {
+              history: vaccineHistory,
+            },
           });
         } else {
           return reply.send({ success: 0 });
-        }
-      } catch (err) {
-        request.server.log.error(err);
-        return reply.status(500).send({
-          success: false,
-          message: "Internal Server Error",
-          error: err.message,
-        });
-      }
-    },
-  },
-  vaccineInfo: {
-    schema: summarySchema.vaccineInfoSchema,
-    handler: async (request, reply) => {
-      try {
-        const { childpid, isinplan, loggedin, previous_chosen } = request.body;
-        const inplan = isinplan;
-        const db = request.server.mysql;
-        let rows1 = [];
-        let rows2 = [];
-
-        // Build query for vaccine types
-        let queryAppend = "";
-        if (inplan == 0) {
-          queryAppend = " OR IN_PLAN = 2";
-        }
-        const contentQuery = `
-          SELECT
-            CODE,
-            DESCRIPTION,
-            DESCRIPTION_TH,
-            DESCRIPTION_TABLE,
-            AGE,
-            AGE_MAX,
-            DISEASE,
-            GRP_NAME,
-            IN_PLAN,
-            INFORMATION,
-            WEB_GRP_NAME,
-            WEB_GRP_ORDER
-          FROM CODE_EPI_VACCINETYPE
-          WHERE (IN_PLAN = ?${queryAppend}) AND CHILD_VACCINE = 1
-          ORDER BY WEB_GRP_ORDER ASC
-        `;
-        const [contentRows] = await db.query(contentQuery, [inplan]);
-        rows1 = contentRows;
-
-        // If logged in, fetch vaccination history
-        if (loggedin == 1) {
-          if (childpid) {
-            const historyQuery = `
-              SELECT
-                c.DESCRIPTION,
-                c.DESCRIPTION_TH,
-                c.DESCRIPTION_TABLE,
-                c.IN_PLAN,
-                e.VACCINETYPE,
-                e.DATE_SERV,
-                c.CODE,
-                c.WEB_GRP_NAME,
-                c.WEB_GRP_ORDER,
-                c.GRP_NAME,
-                c.AGE,
-                c.AGE_MAX,
-                h.HOSPITAL,
-                h.HOSPITALCODE,
-                a.AGE_MONTH
-              FROM EPI e
-              LEFT JOIN CODE_EPI_VACCINETYPE c
-                ON e.VACCINETYPE = c.CODE
-              LEFT JOIN CODE_HOSPITAL h
-                ON e.VACCINEPLACE = h.HOSPITALCODE
-              LEFT JOIN EPI_ADDITIONAL a
-                ON e.VACCINETYPE = a.VACCINETYPE
-                AND e.DATE_SERV = a.DATE_SERV
-              WHERE (e.PID = ? OR a.PID = ?)
-                AND c.IN_PLAN = ?
-              ORDER BY a.DATE_SERV
-            `;
-            const [historyRows] = await db.query(historyQuery, [
-              childpid,
-              childpid,
-              inplan,
-            ]);
-            rows2 = historyRows;
-          }
-          if (rows1.length > 0 || rows2.length > 0) {
-            return reply.send({
-              success: 1,
-              content: rows1,
-              history: rows2,
-              inplan,
-            });
-          } else {
-            return reply.send({ success: 0 });
-          }
-        } else {
-          if (rows1.length > 0) {
-            return reply.send({ success: 1, content: rows1 });
-          } else {
-            return reply.send({ success: 0 });
-          }
         }
       } catch (err) {
         request.server.log.error(err);

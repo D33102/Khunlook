@@ -20,21 +20,12 @@ export function summaryRoute(fastify, options, done) {
   );
 
   fastify.post(
-    "/development/info",
+    "/development-vaccine/info",
     {
       preValidation: [fastify.authenticate],
-      schema: summaryController.developmentInfo.schema,
+      schema: summaryController.developmentAndVaccineInfo.schema,
     },
-    summaryController.developmentInfo.handler
-  );
-
-  fastify.post(
-    "/vaccine/info",
-    {
-      preValidation: [fastify.authenticate],
-      schema: summaryController.vaccineInfo.schema,
-    },
-    summaryController.vaccineInfo.handler
+    summaryController.developmentAndVaccineInfo.handler
   );
   done();
 }

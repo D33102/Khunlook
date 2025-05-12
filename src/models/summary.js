@@ -98,8 +98,8 @@ export const summarySchema = {
       },
     },
   },
-  developmentInfoSchema: {
-    description: "Get detailed development information for a child",
+  developmentAndVaccineInfoSchema: {
+    description: "Get detailed development and vaccine information for a child",
     tags: ["Summary"],
     body: {
       type: "object",
@@ -114,132 +114,92 @@ export const summarySchema = {
         tableName: { type: "string" },
         childlowbtweigth: { type: "string" },
       },
-      required: ["ageMin", "ageMax", "loggedin", "tableName"],
+      required: ["ageMin", "ageMax", "childpid", "loggedin", "tableName"],
     },
     response: {
       200: {
         type: "object",
         properties: {
           success: { type: "boolean" },
-          content: {
-            type: "array",
-            items: {
-              type: "object",
-              properties: {
-                MIN_AGE_MONTH: { type: "integer" },
-                MAX_AGE_MONTH: { type: "integer" },
-                CODE: { type: "string" },
-                TYPE: { type: "integer" },
-                AGE_MONTH_DESCRIPTION: { type: "string" },
-                DESCRIPTION: { type: "string" },
-                INFORMATION: { type: "string" },
-                TYPE_DESCRIPTION: { type: "string" },
-                TBName: { type: "string" },
-                SCREENING: { type: "integer" },
+          development: {
+            type: "object",
+            properties: {
+              content: {
+                type: "array",
+                items: {
+                  type: "object",
+                  properties: {
+                    MIN_AGE_MONTH: { type: "integer" },
+                    MAX_AGE_MONTH: { type: "integer" },
+                    CODE: { type: "string" },
+                    TYPE: { type: "integer" },
+                    AGE_MONTH_DESCRIPTION: { type: "string" },
+                    DESCRIPTION: { type: "string" },
+                    INFORMATION: { type: "string" },
+                    TYPE_DESCRIPTION: { type: "string" },
+                    TBName: { type: "string" },
+                    SCREENING: { type: "integer" },
+                  },
+                },
+              },
+              history: {
+                type: "array",
+                items: {
+                  type: "object",
+                  properties: {
+                    MAX_AGE_MONTH: { type: "integer" },
+                    CODE: { type: "string" },
+                    TYPE: { type: "integer" },
+                    DATE_OCCURRED: { type: "string", format: "date-time" },
+                    MONTH_AT_OCCURRED: { type: "integer" },
+                    MONTH_AT_OCCURRED_CORRECTED: { type: "integer" },
+                  },
+                },
+              },
+              GA: { type: ["integer", "null"] },
+              person: {
+                type: "array",
+                items: {
+                  type: "object",
+                  properties: {
+                    BIRTH: { type: "string", format: "date" },
+                    PID: { type: "string" },
+                    NAME: { type: "string" },
+                  },
+                },
               },
             },
           },
-          history: {
-            type: "array",
-            items: {
-              type: "object",
-              properties: {
-                MAX_AGE_MONTH: { type: "integer" },
-                CODE: { type: "string" },
-                TYPE: { type: "integer" },
-                DATE_OCCURRED: { type: "string", format: "date-time" },
-                MONTH_AT_OCCURRED: { type: "integer" },
-                MONTH_AT_OCCURRED_CORRECTED: { type: "integer" },
-              },
-            },
-          },
-          GA: { type: ["integer", "null"] },
-          person: {
-            type: "array",
-            items: {
-              type: "object",
-              properties: {
-                BIRTH: { type: "string", format: "date" },
-                PID: { type: "string" },
-                NAME: { type: "string" },
+          vaccine: {
+            type: "object",
+            properties: {
+              history: {
+                type: "array",
+                items: {
+                  type: "object",
+                  properties: {
+                    DESCRIPTION: { type: "string" },
+                    DESCRIPTION_TH: { type: "string" },
+                    DESCRIPTION_TABLE: { type: "string" },
+                    IN_PLAN: { type: "integer" },
+                    VACCINETYPE: { type: "string" },
+                    DATE_SERV: { type: "string", format: "date-time" },
+                    CODE: { type: "string" },
+                    WEB_GRP_NAME: { type: "string" },
+                    WEB_GRP_ORDER: { type: "integer" },
+                    GRP_NAME: { type: "string" },
+                    AGE: { type: "integer" },
+                    AGE_MAX: { type: "integer" },
+                    HOSPITAL: { type: "string" },
+                    HOSPITALCODE: { type: "string" },
+                    AGE_MONTH: { type: "integer" },
+                  },
+                },
               },
             },
           },
         },
-      },
-      500: {
-        type: "object",
-        properties: {
-          success: { type: "boolean" },
-          message: { type: "string" },
-          error: { type: "string" },
-        },
-      },
-    },
-  },
-  vaccineInfoSchema: {
-    description: "Get vaccine information for a child",
-    tags: ["Summary"],
-    body: {
-      type: "object",
-      properties: {
-        childpid: { type: "string" },
-        isinplan: { type: "integer" },
-        loggedin: { type: "integer" },
-        previous_chosen: { type: "string" },
-      },
-      required: ["isinplan", "loggedin"],
-    },
-    response: {
-      200: {
-        type: "object",
-        properties: {
-          success: { type: "boolean" },
-          content: {
-            type: "array",
-            items: {
-              type: "object",
-              properties: {
-                CODE: { type: "string" },
-                DESCRIPTION: { type: "string" },
-                DESCRIPTION_TH: { type: "string" },
-                DESCRIPTION_TABLE: { type: "string" },
-                AGE: { type: "integer" },
-                AGE_MAX: { type: "integer" },
-                DISEASE: { type: "string" },
-                GRP_NAME: { type: "string" },
-                IN_PLAN: { type: "integer" },
-                INFORMATION: { type: "string" },
-                WEB_GRP_NAME: { type: "string" },
-                WEB_GRP_ORDER: { type: "integer" },
-              },
-            },
-          },
-          history: {
-            type: "array",
-            items: {
-              type: "object",
-              properties: {
-                DESCRIPTION: { type: "string" },
-                DESCRIPTION_TH: { type: "string" },
-                DESCRIPTION_TABLE: { type: "string" },
-                IN_PLAN: { type: "integer" },
-                VACCINETYPE: { type: "string" },
-                DATE_SERV: { type: "string", format: "date-time" },
-                CODE: { type: "string" },
-                WEB_GRP_NAME: { type: "string" },
-                WEB_GRP_ORDER: { type: "integer" },
-                GRP_NAME: { type: "string" },
-                AGE: { type: "integer" },
-                AGE_MAX: { type: "integer" },
-                HOSPITAL: { type: "string" },
-                HOSPITALCODE: { type: "string" },
-                AGE_MONTH: { type: "integer" },
-              },
-            },
-          },
-          inplan: { type: "integer" },
-        },
+        required: ["success", "development", "vaccine"],
       },
       500: {
         type: "object",
