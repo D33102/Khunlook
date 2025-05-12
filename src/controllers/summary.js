@@ -191,104 +191,107 @@ export const summaryController = {
           const [contentRows] = await db.query(query, [ageMin, ageMax]);
           rows1 = contentRows;
         } else {
-          // Summary page content: replicate PHP logic for summary selection here if needed
-          // Query PARAMETER_CONFIGURATION for MAX_ANAMAI55_DEVELOPMENT and MIN_ANAMAI55_DEVELOPMENT
-          const [paramConfig] = await db.query(
-            `SELECT MAX_ANAMAI55_DEVELOPMENT, MIN_ANAMAI55_DEVELOPMENT FROM PARAMETER_CONFIGURATION LIMIT 1`
-          );
-          const maxAnamai = paramConfig[0]?.MAX_ANAMAI55_DEVELOPMENT ?? null;
-          const minAnamai = paramConfig[0]?.MIN_ANAMAI55_DEVELOPMENT ?? null;
-
-          // Query NEWBORN for BWEIGHT and ASPHYXIA
-          const [newbornResult] = await db.query(
-            `SELECT BWEIGHT, ASPHYXIA FROM NEWBORN WHERE PID = ? LIMIT 1`,
+          // Summary page content when ageMax == -1
+          const parameterNameMax = "MAX_ANAMAI55_DEVELOPMENT";
+          const parameterNameMin = "MIN_ANAMAI55_DEVELOPMENT";
+          // Fetch parameters and newborn data
+          const [paramRows] = await db.query(
+            `SELECT pc.PARAMETER_NAME, pc.PARAMETER_VALUE, n.ASPHYXIA, n.BWEIGHT
+             FROM PARAMETER_CONFIGURATION pc
+             INNER JOIN NEWBORN n ON n.PID = pc.PID
+             WHERE pc.PID = ?`,
             [childpid]
           );
-          const beweight = newbornResult[0]?.BWEIGHT ?? null;
-          const asphyxia = newbornResult[0]?.ASPHYXIA ?? null;
 
-          // Initialize rows1 as empty array
-          rows1 = [];
+          let maxMonth = 0;
+          let minMonth = 0;
+          let beweight = 2500;
+          let asphyxia = "2";
 
-          // Query GL_DEVELOPMENT for summary if maxAnamai and minAnamai are set
-          if (minAnamai !== null && maxAnamai !== null) {
-            const [glDevelopmentRows] = await db.query(
-              `
-              SELECT
-                d.MIN_AGE_MONTH,
-                d.MAX_AGE_MONTH,
-                d.CODE,
-                d.TYPE,
-                d.AGE_MONTH_DESCRIPTION,
-                d.DESCRIPTION,
-                d.INFORMATION,
-                t.DESCRIPTION AS TYPE_DESCRIPTION,
-                'GL_DEVELOPMENT' AS TBName,
-                0 AS SCREENING
-              FROM GL_DEVELOPMENT d
-              LEFT JOIN GL_DEVELOPMENT_TYPE t
-                ON d.TYPE = t.CODE
-              WHERE d.MIN_AGE_MONTH >= ? AND d.MAX_AGE_MONTH <= ?
-              ORDER BY d.TYPE ASC, d.CODE ASC
-              `,
-              [minAnamai, maxAnamai]
-            );
-            rows1 = rows1.concat(glDevelopmentRows);
+          for (const r of paramRows) {
+            if (r.ASPHYXIA != null) {
+              asphyxia = r.ASPHYXIA;
+            }
+            if (r.BWEIGHT != null) {
+              beweight = r.BWEIGHT;
+            }
+            if (r.PARAMETER_NAME === parameterNameMax) {
+              maxMonth = r.PARAMETER_VALUE;
+            }
+            if (r.PARAMETER_NAME === parameterNameMin) {
+              minMonth = r.PARAMETER_VALUE;
+            }
           }
 
-          // Query GL_DEVELOPMENT_DAIM if tableName is GL_DEVELOPMENT_DAIM or GL_DEVELOPMENT_DSPM and maxAnamai > 24
-          if (
-            tableName === "GL_DEVELOPMENT_DAIM" ||
-            (tableName === "GL_DEVELOPMENT_DSPM" && maxAnamai > 24)
-          ) {
-            const [glDevelopmentDaimRows] = await db.query(
-              `
-              SELECT
-                d.MIN_AGE_MONTH,
-                d.MAX_AGE_MONTH,
-                d.CODE,
-                d.TYPE,
-                d.AGE_MONTH_DESCRIPTION,
-                d.DESCRIPTION,
-                d.INFORMATION,
-                t.DESCRIPTION AS TYPE_DESCRIPTION,
-                'GL_DEVELOPMENT_DAIM' AS TBName,
-                d.SCREENING
-              FROM GL_DEVELOPMENT_DAIM d
-              LEFT JOIN GL_DEVELOPMENT_TYPE_DSPM_DAIM t
-                ON d.TYPE = t.CODE
-              WHERE d.MIN_AGE_MONTH >= ? AND d.MAX_AGE_MONTH <= ?
-              ORDER BY d.TYPE ASC, d.CODE ASC
-              `,
-              [minAnamai, maxAnamai]
-            );
-            rows1 = rows1.concat(glDevelopmentDaimRows);
-          }
+          // Query GL_DEVELOPMENT
+          const [devRows] = await db.query(
+            `SELECT
+              d.AGE_MONTH_DESCRIPTION,
+              d.MIN_AGE_MONTH,
+              d.MAX_AGE_MONTH,
+              d.TYPE,
+              'GL_DEVELOPMENT' AS TBName,
+              0 AS SCREENING,
+              1 AS FLAGS
+             FROM GL_DEVELOPMENT d
+             WHERE d.MIN_AGE_MONTH <= ? AND d.MAX_AGE_MONTH <= ?
+             ORDER BY d.TYPE ASC, d.CODE ASC`,
+            [minMonth, maxMonth]
+          );
+          rows1 = devRows;
 
-          // Query GL_DEVELOPMENT_DSPM if tableName is GL_DEVELOPMENT_DSPM
-          if (tableName === "GL_DEVELOPMENT_DSPM") {
-            const [glDevelopmentDspmRows] = await db.query(
-              `
-              SELECT
-                d.MIN_AGE_MONTH,
-                d.MAX_AGE_MONTH,
-                d.CODE,
-                d.TYPE,
-                d.AGE_MONTH_DESCRIPTION,
-                d.DESCRIPTION,
-                d.INFORMATION,
-                t.DESCRIPTION AS TYPE_DESCRIPTION,
-                'GL_DEVELOPMENT_DSPM' AS TBName,
-                d.SCREENING
-              FROM GL_DEVELOPMENT_DSPM d
-              LEFT JOIN GL_DEVELOPMENT_TYPE_DSPM_DAIM t
-                ON d.TYPE = t.CODE
-              WHERE d.MIN_AGE_MONTH >= ? AND d.MAX_AGE_MONTH <= ?
-              ORDER BY d.TYPE ASC, d.CODE ASC
-              `,
-              [minAnamai, maxAnamai]
+          // DAIM and DSPM based on asphyxia or low birth weight
+          if (asphyxia === "1" || beweight < 2500) {
+            const [daimRows] = await db.query(
+              `SELECT
+                  d.AGE_MONTH_DESCRIPTION,
+                  d.MIN_AGE_MONTH,
+                  d.MAX_AGE_MONTH,
+                  d.TYPE,
+                  'GL_DEVELOPMENT_DAIM' AS TBName,
+                  0 AS SCREENING,
+                  2 AS FLAGS
+               FROM GL_DEVELOPMENT_DAIM d
+               WHERE d.MIN_AGE_MONTH >= ? AND d.MAX_AGE_MONTH >= ?
+               ORDER BY d.TYPE ASC, d.CODE ASC`,
+              [minMonth, maxMonth]
             );
-            rows1 = rows1.concat(glDevelopmentDspmRows);
+            rows1 = rows1.concat(daimRows);
+
+            const [dspmRows] = await db.query(
+              `SELECT
+                  d.AGE_MONTH_DESCRIPTION,
+                  d.MIN_AGE_MONTH,
+                  d.MAX_AGE_MONTH,
+                  d.TYPE,
+                  'GL_DEVELOPMENT_DSPM' AS TBName,
+                  d.SCREENING,
+                  3 AS FLAGS
+               FROM GL_DEVELOPMENT_DSPM d
+               WHERE d.MIN_AGE_MONTH > 24
+                 AND d.MIN_AGE_MONTH >= ?
+                 AND d.MAX_AGE_MONTH >= ?
+               ORDER BY FLAGS, d.MIN_AGE_MONTH, d.MAX_AGE_MONTH, d.TYPE`,
+              [minMonth, maxMonth]
+            );
+            rows1 = rows1.concat(dspmRows);
+          } else {
+            const [dspmRows] = await db.query(
+              `SELECT
+                  d.AGE_MONTH_DESCRIPTION,
+                  d.MIN_AGE_MONTH,
+                  d.MAX_AGE_MONTH,
+                  d.TYPE,
+                  'GL_DEVELOPMENT_DSPM' AS TBName,
+                  d.SCREENING,
+                  2 AS FLAGS
+               FROM GL_DEVELOPMENT_DSPM d
+               WHERE d.MIN_AGE_MONTH >= ?
+                 AND d.MAX_AGE_MONTH >= ?
+               ORDER BY FLAGS, d.MIN_AGE_MONTH, d.MAX_AGE_MONTH, d.TYPE`,
+              [minMonth, maxMonth]
+            );
+            rows1 = rows1.concat(dspmRows);
           }
         }
 
