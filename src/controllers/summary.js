@@ -320,13 +320,15 @@ export const summaryController = {
                 FROM DEVELOPMENT r
                 LEFT JOIN GL_DEVELOPMENT d
                   ON r.DEVELOPMENT = d.CODE
-                WHERE r.PID = ?
+                WHERE r.PID = ? AND d.MIN_AGE_MONTH = ? AND d.MAX_AGE_MONTH = ? 
                 ORDER BY d.TYPE ASC, d.CODE ASC
               `;
               const [historyRows] = await db.query(histQuery, [
                 childbirth,
                 childcorrectedbirth,
                 childpid,
+                ageMin,
+                ageMax
               ]);
               rows2 = historyRows;
             } else if (tableName === "GL_DEVELOPMENT_DSPM") {
@@ -343,13 +345,15 @@ export const summaryController = {
                 FROM DEVELOPMENT r
                 LEFT JOIN GL_DEVELOPMENT_DSPM d
                   ON r.DEVELOPMENT = d.CODE
-                WHERE r.PID = ?
+                WHERE r.PID = ? AND d.MIN_AGE_MONTH = ? AND d.MAX_AGE_MONTH = ? 
                 ORDER BY d.TYPE ASC, d.CODE ASC
               `;
               const [historyRows] = await db.query(histQuery, [
                 childbirth,
                 childbirth,
                 childpid,
+                ageMin,
+                ageMax
               ]);
               rows2 = historyRows;
             } else if (tableName === "GL_DEVELOPMENT_DAIM") {
@@ -366,13 +370,15 @@ export const summaryController = {
                 FROM DEVELOPMENT r
                 LEFT JOIN GL_DEVELOPMENT_DAIM d
                   ON r.DEVELOPMENT = d.CODE
-                WHERE r.PID = ?
+                WHERE r.PID = ? AND d.MIN_AGE_MONTH = ? AND d.MAX_AGE_MONTH = ? 
                 ORDER BY d.TYPE ASC, d.CODE ASC
               `;
               const [historyRows] = await db.query(histQuery, [
                 childbirth,
                 childbirth,
                 childpid,
+                ageMin,
+                ageMax
               ]);
               rows2 = historyRows;
             }
