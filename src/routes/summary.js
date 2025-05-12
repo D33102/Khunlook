@@ -19,5 +19,13 @@ export function summaryRoute(fastify, options, done) {
     summaryController.infoGetInformation.handler
   );
 
+  fastify.post(
+    "/development-vaccine/info",
+    {
+      preValidation: [fastify.authenticate],
+      schema: summaryController.developmentAndVaccineInfo.schema,
+    },
+    summaryController.developmentAndVaccineInfo.handler
+  );
   done();
 }
