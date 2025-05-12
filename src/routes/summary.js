@@ -19,5 +19,22 @@ export function summaryRoute(fastify, options, done) {
     summaryController.infoGetInformation.handler
   );
 
+  fastify.post(
+    "/development/info",
+    {
+      preValidation: [fastify.authenticate],
+      schema: summaryController.developmentInfo.schema,
+    },
+    summaryController.developmentInfo.handler
+  );
+
+  fastify.post(
+    "/vaccine/info",
+    {
+      preValidation: [fastify.authenticate],
+      schema: summaryController.vaccineInfo.schema,
+    },
+    summaryController.vaccineInfo.handler
+  );
   done();
 }

@@ -98,4 +98,418 @@ export const summaryController = {
       }
     },
   },
+  developmentInfo: {
+    schema: summarySchema.developmentInfoSchema,
+    handler: async (request, reply) => {
+      try {
+        const {
+          ageMin,
+          ageMax,
+          childpid,
+          childbirth,
+          childcorrectedbirth,
+          loggedin,
+          previous_chosen,
+          tableName,
+          childlowbtweigth,
+        } = request.body;
+
+        // Validate numeric ageMin and ageMax
+        if (isNaN(ageMin) || isNaN(ageMax)) {
+          return reply
+            .status(400)
+            .send({ success: false, message: "Invalid ageMin or ageMax" });
+        }
+
+        const db = request.server.mysql;
+        let rows1 = [];
+
+        // Content rows
+        if (ageMax !== "-1") {
+          let query;
+          if (
+            tableName === "GL_DEVELOPMENT_DSPM" ||
+            (tableName === "GL_DEVELOPMENT_DAIM" && ageMax > 24)
+          ) {
+            query = `
+              SELECT
+                d.MIN_AGE_MONTH,
+                d.MAX_AGE_MONTH,
+                d.CODE,
+                d.TYPE,
+                d.AGE_MONTH_DESCRIPTION,
+                d.DESCRIPTION,
+                d.INFORMATION,
+                t.DESCRIPTION AS TYPE_DESCRIPTION,
+                'GL_DEVELOPMENT_DSPM' AS TBName,
+                d.SCREENING
+              FROM GL_DEVELOPMENT_DSPM d
+              LEFT JOIN GL_DEVELOPMENT_TYPE_DSPM_DAIM t
+                ON d.TYPE = t.CODE
+              WHERE d.MIN_AGE_MONTH = ? AND d.MAX_AGE_MONTH = ?
+              ORDER BY d.TYPE ASC, d.CODE ASC
+            `;
+          } else if (tableName === "GL_DEVELOPMENT_DAIM") {
+            query = `
+              SELECT
+                d.MIN_AGE_MONTH,
+                d.MAX_AGE_MONTH,
+                d.CODE,
+                d.TYPE,
+                d.AGE_MONTH_DESCRIPTION,
+                d.DESCRIPTION,
+                d.INFORMATION,
+                t.DESCRIPTION AS TYPE_DESCRIPTION,
+                'GL_DEVELOPMENT_DAIM' AS TBName,
+                d.SCREENING
+              FROM GL_DEVELOPMENT_DAIM d
+              LEFT JOIN GL_DEVELOPMENT_TYPE_DSPM_DAIM t
+                ON d.TYPE = t.CODE
+              WHERE d.MIN_AGE_MONTH = ? AND d.MAX_AGE_MONTH = ?
+              ORDER BY d.TYPE ASC, d.CODE ASC
+            `;
+          } else if (tableName === "GL_DEVELOPMENT") {
+            query = `
+              SELECT
+                d.MIN_AGE_MONTH,
+                d.MAX_AGE_MONTH,
+                d.CODE,
+                d.TYPE,
+                d.AGE_MONTH_DESCRIPTION,
+                d.DESCRIPTION,
+                d.INFORMATION,
+                t.DESCRIPTION AS TYPE_DESCRIPTION,
+                'GL_DEVELOPMENT' AS TBName,
+                0 AS SCREENING
+              FROM GL_DEVELOPMENT d
+              LEFT JOIN GL_DEVELOPMENT_TYPE t
+                ON d.TYPE = t.CODE
+              WHERE d.MIN_AGE_MONTH = ? AND d.MAX_AGE_MONTH = ?
+              ORDER BY d.TYPE ASC, d.CODE ASC
+            `;
+          }
+          const [contentRows] = await db.query(query, [ageMin, ageMax]);
+          rows1 = contentRows;
+        } else {
+          // Summary page content: replicate PHP logic for summary selection here if needed
+          // Query PARAMETER_CONFIGURATION for MAX_ANAMAI55_DEVELOPMENT and MIN_ANAMAI55_DEVELOPMENT
+          const [paramConfig] = await db.query(
+            `SELECT MAX_ANAMAI55_DEVELOPMENT, MIN_ANAMAI55_DEVELOPMENT FROM PARAMETER_CONFIGURATION LIMIT 1`
+          );
+          const maxAnamai = paramConfig[0]?.MAX_ANAMAI55_DEVELOPMENT ?? null;
+          const minAnamai = paramConfig[0]?.MIN_ANAMAI55_DEVELOPMENT ?? null;
+
+          // Query NEWBORN for BWEIGHT and ASPHYXIA
+          const [newbornResult] = await db.query(
+            `SELECT BWEIGHT, ASPHYXIA FROM NEWBORN WHERE PID = ? LIMIT 1`,
+            [childpid]
+          );
+          const beweight = newbornResult[0]?.BWEIGHT ?? null;
+          const asphyxia = newbornResult[0]?.ASPHYXIA ?? null;
+
+          // Initialize rows1 as empty array
+          rows1 = [];
+
+          // Query GL_DEVELOPMENT for summary if maxAnamai and minAnamai are set
+          if (minAnamai !== null && maxAnamai !== null) {
+            const [glDevelopmentRows] = await db.query(
+              `
+              SELECT
+                d.MIN_AGE_MONTH,
+                d.MAX_AGE_MONTH,
+                d.CODE,
+                d.TYPE,
+                d.AGE_MONTH_DESCRIPTION,
+                d.DESCRIPTION,
+                d.INFORMATION,
+                t.DESCRIPTION AS TYPE_DESCRIPTION,
+                'GL_DEVELOPMENT' AS TBName,
+                0 AS SCREENING
+              FROM GL_DEVELOPMENT d
+              LEFT JOIN GL_DEVELOPMENT_TYPE t
+                ON d.TYPE = t.CODE
+              WHERE d.MIN_AGE_MONTH >= ? AND d.MAX_AGE_MONTH <= ?
+              ORDER BY d.TYPE ASC, d.CODE ASC
+              `,
+              [minAnamai, maxAnamai]
+            );
+            rows1 = rows1.concat(glDevelopmentRows);
+          }
+
+          // Query GL_DEVELOPMENT_DAIM if tableName is GL_DEVELOPMENT_DAIM or GL_DEVELOPMENT_DSPM and maxAnamai > 24
+          if (
+            tableName === "GL_DEVELOPMENT_DAIM" ||
+            (tableName === "GL_DEVELOPMENT_DSPM" && maxAnamai > 24)
+          ) {
+            const [glDevelopmentDaimRows] = await db.query(
+              `
+              SELECT
+                d.MIN_AGE_MONTH,
+                d.MAX_AGE_MONTH,
+                d.CODE,
+                d.TYPE,
+                d.AGE_MONTH_DESCRIPTION,
+                d.DESCRIPTION,
+                d.INFORMATION,
+                t.DESCRIPTION AS TYPE_DESCRIPTION,
+                'GL_DEVELOPMENT_DAIM' AS TBName,
+                d.SCREENING
+              FROM GL_DEVELOPMENT_DAIM d
+              LEFT JOIN GL_DEVELOPMENT_TYPE_DSPM_DAIM t
+                ON d.TYPE = t.CODE
+              WHERE d.MIN_AGE_MONTH >= ? AND d.MAX_AGE_MONTH <= ?
+              ORDER BY d.TYPE ASC, d.CODE ASC
+              `,
+              [minAnamai, maxAnamai]
+            );
+            rows1 = rows1.concat(glDevelopmentDaimRows);
+          }
+
+          // Query GL_DEVELOPMENT_DSPM if tableName is GL_DEVELOPMENT_DSPM
+          if (tableName === "GL_DEVELOPMENT_DSPM") {
+            const [glDevelopmentDspmRows] = await db.query(
+              `
+              SELECT
+                d.MIN_AGE_MONTH,
+                d.MAX_AGE_MONTH,
+                d.CODE,
+                d.TYPE,
+                d.AGE_MONTH_DESCRIPTION,
+                d.DESCRIPTION,
+                d.INFORMATION,
+                t.DESCRIPTION AS TYPE_DESCRIPTION,
+                'GL_DEVELOPMENT_DSPM' AS TBName,
+                d.SCREENING
+              FROM GL_DEVELOPMENT_DSPM d
+              LEFT JOIN GL_DEVELOPMENT_TYPE_DSPM_DAIM t
+                ON d.TYPE = t.CODE
+              WHERE d.MIN_AGE_MONTH >= ? AND d.MAX_AGE_MONTH <= ?
+              ORDER BY d.TYPE ASC, d.CODE ASC
+              `,
+              [minAnamai, maxAnamai]
+            );
+            rows1 = rows1.concat(glDevelopmentDspmRows);
+          }
+        }
+
+        // History and person info for logged in users
+        let rows2 = [],
+          rows3 = [],
+          GA = null;
+        if (loggedin == 1) {
+          if (ageMax !== "-1") {
+            let histQuery;
+            if (tableName === "GL_DEVELOPMENT") {
+              histQuery = `
+                SELECT
+                  d.MAX_AGE_MONTH,
+                  d.CODE,
+                  d.TYPE,
+                  r.DEVELOPMENT AS CODE,
+                  r.DATE_OCCURRED,
+                  TIMESTAMPDIFF(MONTH, ?, r.DATE_OCCURRED) AS MONTH_AT_OCCURRED,
+                  TIMESTAMPDIFF(MONTH, ?, r.DATE_OCCURRED) AS MONTH_AT_OCCURRED_CORRECTED
+                FROM DEVELOPMENT r
+                LEFT JOIN GL_DEVELOPMENT d
+                  ON r.DEVELOPMENT = d.CODE
+                WHERE r.PID = ? AND d.MIN_AGE_MONTH = ? AND d.MAX_AGE_MONTH = ?
+                ORDER BY d.TYPE ASC, d.CODE ASC
+              `;
+              const [historyRows] = await db.query(histQuery, [
+                childbirth,
+                childcorrectedbirth,
+                childpid,
+                ageMin,
+                ageMax,
+              ]);
+              rows2 = historyRows;
+            } else if (tableName === "GL_DEVELOPMENT_DSPM") {
+              histQuery = `
+                SELECT
+                  d.MAX_AGE_MONTH,
+                  d.CODE,
+                  d.TYPE,
+                  r.DEVELOPMENT AS CODE,
+                  r.DATE_OCCURRED,
+                  TIMESTAMPDIFF(MONTH, ?, r.DATE_OCCURRED) AS MONTH_AT_OCCURRED,
+                  TIMESTAMPDIFF(MONTH, ?, r.DATE_OCCURRED) AS MONTH_AT_OCCURRED_CORRECTED
+                FROM DEVELOPMENT r
+                LEFT JOIN GL_DEVELOPMENT_DSPM d
+                  ON r.DEVELOPMENT = d.CODE
+                WHERE r.PID = ? AND d.MIN_AGE_MONTH = ? AND d.MAX_AGE_MONTH = ?
+                ORDER BY d.TYPE ASC, d.CODE ASC
+              `;
+              const [historyRows] = await db.query(histQuery, [
+                childbirth,
+                childbirth,
+                childpid,
+                ageMin,
+                ageMax,
+              ]);
+              rows2 = historyRows;
+            } else if (tableName === "GL_DEVELOPMENT_DAIM") {
+              histQuery = `
+                SELECT
+                  d.MAX_AGE_MONTH,
+                  d.CODE,
+                  d.TYPE,
+                  r.DEVELOPMENT AS CODE,
+                  r.DATE_OCCURRED,
+                  TIMESTAMPDIFF(MONTH, ?, r.DATE_OCCURRED) AS MONTH_AT_OCCURRED,
+                  TIMESTAMPDIFF(MONTH, ?, r.DATE_OCCURRED) AS MONTH_AT_OCCURRED_CORRECTED
+                FROM DEVELOPMENT r
+                LEFT JOIN GL_DEVELOPMENT_DAIM d
+                  ON r.DEVELOPMENT = d.CODE
+                WHERE r.PID = ? AND d.MIN_AGE_MONTH = ? AND d.MAX_AGE_MONTH = ?
+                ORDER BY d.TYPE ASC, d.CODE ASC
+              `;
+              const [historyRows] = await db.query(histQuery, [
+                childbirth,
+                childbirth,
+                childpid,
+                ageMin,
+                ageMax,
+              ]);
+              rows2 = historyRows;
+            }
+          }
+
+          // GA from NEWBORN
+          const [gaResult] = await db.query(
+            "SELECT GA FROM NEWBORN WHERE PID = ?",
+            [childpid]
+          );
+          GA = gaResult[0]?.GA ?? null;
+
+          // Person info
+          const [personResult] = await db.query(
+            "SELECT BIRTH, PID, NAME FROM PERSON WHERE PID = ?",
+            [childpid]
+          );
+          rows3 = personResult;
+        }
+
+        if (rows1.length > 0 || rows2.length > 0) {
+          return reply.send({
+            success: 1,
+            content: rows1,
+            history: rows2,
+            GA,
+            person: rows3,
+          });
+        } else {
+          return reply.send({ success: 0 });
+        }
+      } catch (err) {
+        request.server.log.error(err);
+        return reply.status(500).send({
+          success: false,
+          message: "Internal Server Error",
+          error: err.message,
+        });
+      }
+    },
+  },
+  vaccineInfo: {
+    schema: summarySchema.vaccineInfoSchema,
+    handler: async (request, reply) => {
+      try {
+        const { childpid, isinplan, loggedin, previous_chosen } = request.body;
+        const inplan = isinplan;
+        const db = request.server.mysql;
+        let rows1 = [];
+        let rows2 = [];
+
+        // Build query for vaccine types
+        let queryAppend = "";
+        if (inplan == 0) {
+          queryAppend = " OR IN_PLAN = 2";
+        }
+        const contentQuery = `
+          SELECT
+            CODE,
+            DESCRIPTION,
+            DESCRIPTION_TH,
+            DESCRIPTION_TABLE,
+            AGE,
+            AGE_MAX,
+            DISEASE,
+            GRP_NAME,
+            IN_PLAN,
+            INFORMATION,
+            WEB_GRP_NAME,
+            WEB_GRP_ORDER
+          FROM CODE_EPI_VACCINETYPE
+          WHERE (IN_PLAN = ?${queryAppend}) AND CHILD_VACCINE = 1
+          ORDER BY WEB_GRP_ORDER ASC
+        `;
+        const [contentRows] = await db.query(contentQuery, [inplan]);
+        rows1 = contentRows;
+
+        // If logged in, fetch vaccination history
+        if (loggedin == 1) {
+          if (childpid) {
+            const historyQuery = `
+              SELECT
+                c.DESCRIPTION,
+                c.DESCRIPTION_TH,
+                c.DESCRIPTION_TABLE,
+                c.IN_PLAN,
+                e.VACCINETYPE,
+                e.DATE_SERV,
+                c.CODE,
+                c.WEB_GRP_NAME,
+                c.WEB_GRP_ORDER,
+                c.GRP_NAME,
+                c.AGE,
+                c.AGE_MAX,
+                h.HOSPITAL,
+                h.HOSPITALCODE,
+                a.AGE_MONTH
+              FROM EPI e
+              LEFT JOIN CODE_EPI_VACCINETYPE c
+                ON e.VACCINETYPE = c.CODE
+              LEFT JOIN CODE_HOSPITAL h
+                ON e.VACCINEPLACE = h.HOSPITALCODE
+              LEFT JOIN EPI_ADDITIONAL a
+                ON e.VACCINETYPE = a.VACCINETYPE
+                AND e.DATE_SERV = a.DATE_SERV
+              WHERE (e.PID = ? OR a.PID = ?)
+                AND c.IN_PLAN = ?
+              ORDER BY a.DATE_SERV
+            `;
+            const [historyRows] = await db.query(historyQuery, [
+              childpid,
+              childpid,
+              inplan,
+            ]);
+            rows2 = historyRows;
+          }
+          if (rows1.length > 0 || rows2.length > 0) {
+            return reply.send({
+              success: 1,
+              content: rows1,
+              history: rows2,
+              inplan,
+            });
+          } else {
+            return reply.send({ success: 0 });
+          }
+        } else {
+          if (rows1.length > 0) {
+            return reply.send({ success: 1, content: rows1 });
+          } else {
+            return reply.send({ success: 0 });
+          }
+        }
+      } catch (err) {
+        request.server.log.error(err);
+        return reply.status(500).send({
+          success: false,
+          message: "Internal Server Error",
+          error: err.message,
+        });
+      }
+    },
+  },
 };
