@@ -5,7 +5,7 @@ export const growthController = {
     schema: growthSchema.getInformationSchema,
     handler: async (request, reply) => {
       try {
-        const { childpid, previous_chosen } = request.body;
+        const { childpid } = request.body;
         const query = `SELECT NUTRITION.ID, NUTRITION.DATE_SERV, NUTRITION.WEIGHT, NUTRITION.HEIGHT, 
         NUTRITION.HEADCIRCUM, PERSON.SEX, PERSON.BIRTH, 
         (timestampdiff(DAY, PERSON.BIRTH, NUTRITION.DATE_SERV)) AS AGEDAY, 
@@ -18,6 +18,7 @@ export const growthController = {
         ORDER BY NUTRITION.DATE_SERV`;
 
         const [rows] = await request.server.mysql.execute(query, [childpid]);
+        console.log(rows)
         if (rows.length > 0)
           return reply.status(200).send({
             success: true,
@@ -44,25 +45,20 @@ export const growthController = {
     handler: async (request, reply) => {
       try {
         const {
-          servicedatepicker,
-          datepicker,
+          date,
           weight,
           height,
           hcir,
-          nuchildsex,
-          nuchildhospcode,
-          nuchildpid,
-          nuchildname,
-          changedropdown,
-          previous_chosen,
+          hospcode,
+          childPid,
         } = request.body;
         const requiredFields = [
-          "servicedatepicker",
+          "date",
           "weight",
           "height",
           "hcir",
-          "nuchildhospcode",
-          "nuchildpid",
+          "hospcode",
+          "childPid",
         ];
         const missingFields = requiredFields.filter(
           (field) => !request.body[field]
@@ -79,9 +75,9 @@ export const growthController = {
         const query =
           "INSERT INTO NUTRITION (HOSPCODE,PID,DATE_SERV,WEIGHT,HEIGHT,HEADCIRCUM,D_UPDATE) VALUES (?,?,?,?,?,?,?)";
         await request.server.mysql.execute(query, [
-          nuchildhospcode,
-          nuchildpid,
-          servicedatepicker,
+          hospcode,
+          childPid,
+          date,
           weight,
           height,
           hcir,
@@ -91,12 +87,12 @@ export const growthController = {
           success: true,
           message: "successfully insert data",
           data: {
-            servicedatepicker,
+            date,
             weight,
             height,
             hcir,
-            nuchildhospcode,
-            nuchildpid,
+            hospcode,
+            childPid,
           },
         });
       } catch (err) {

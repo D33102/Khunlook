@@ -7,7 +7,6 @@ export const growthSchema = {
       type: "object",
       properties: {
         childpid: constraint.PID(),
-        previous_chosen: constraint.PID(),
       },
       required: ["childpid"],
     },
@@ -18,19 +17,7 @@ export const growthSchema = {
           success: { type: "boolean" },
           message: { type: "string" },
           data: {
-            type: "object",
-            properties: {
-              nid: { type: "integer" },
-              date: constraint.DATE(),
-              weight: constraint.WEIGHT(),
-              height: constraint.HEIGHT(),
-              hearcircum: constraint.HEADCIRCUM(),
-              sex: constraint.SEX(),
-              birth: constraint.DATE(),
-              ageDay: constraint.AGE(),
-              ageMonth: constraint.AGE_MONTH_DESCRIPTION(),
-              GA: constraint.GA(),
-            },
+            type:"array"
           },
         },
         required: ["success", "message", "data"],
@@ -52,23 +39,20 @@ export const growthSchema = {
     body: {
       type: "object",
       properties: {
-        servicedatepicker: constraint.DATE(),
+        date: constraint.DATE(),
         weight: constraint.WEIGHT(),
         height: constraint.HEIGHT(),
         hcir: constraint.HEADCIRCUM(),
-        nuchildhospcode: constraint.HOSPITALCODE(),
-        nuchildpid: constraint.PID(),
-        nuchildname: { type: "string" },
-        changedropdown: { type: "number" },
-        previous_chosen: constraint.PID(),
+        hospcode: constraint.HOSPITALCODE(),
+        childPid: constraint.PID(),
       },
       required: [
-        "servicedatepicker",
+        "date",
         "weight",
         "height",
         "hcir",
-        "nuchildhospcode",
-        "nuchildpid",
+        "hospcode",
+        "childPid",
       ],
     },
     response: {
