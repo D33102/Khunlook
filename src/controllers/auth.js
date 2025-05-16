@@ -12,18 +12,18 @@ export const authController = {
         const { USERNAME, PASSWORD } = request.body;
         const [rows] = await request.server.mysql.execute(
           `
-          SELECT 
-            USER.*, 
-            PERSON.PID 
-          FROM 
-            USER 
-          JOIN 
-            PERSON 
-          ON 
-            USER.ID = PERSON.ID 
-          WHERE 
+          SELECT
+            USER.*,
+            PERSON.PID
+          FROM
+            USER
+          JOIN
+            PERSON
+          ON
+            USER.ID = PERSON.ID
+          WHERE
             USER.USERNAME = ?`,
-          [USERNAME]
+          [USERNAME],
         );
         if (rows.length === 0) {
           return reply.status(401).send({
@@ -46,23 +46,22 @@ export const authController = {
         // Generate access token
         const accessToken = request.server.jwt.sign(
           { username: USERNAME },
-          { expiresIn: ACCESSTOKENLIFETIME } // Define ACCESSTOKENLIFETIME
+          { expiresIn: ACCESSTOKENLIFETIME }, // Define ACCESSTOKENLIFETIME
         );
 
         // Generate refresh token
         const refreshToken = request.server.jwt.sign(
           { username: USERNAME },
-          { expiresIn: REFRESHTOKENLIFETIME } // Define REFRESHTOKENLIFETIME
+          { expiresIn: REFRESHTOKENLIFETIME }, // Define REFRESHTOKENLIFETIME
         );
 
         // Exclude password before sending the user data
-        const { password, PID, ...userWithoutPassword } = rows[0];
-
+        const { password, ...userWithoutPassword } = rows[0];
         return reply.status(200).send({
           success: true,
           message: "Login successful",
           data: {
-            user: { ...userWithoutPassword, PID },
+            user: { ...userWithoutPassword },
             tokens: { accessToken, refreshToken },
           },
         });
@@ -95,7 +94,7 @@ export const authController = {
 
         const newAccessToken = request.server.jwt.sign(
           { username: decoded.username },
-          { expiresIn: ACCESSTOKENLIFETIME } // Define ACCESSTOKENLIFETIME
+          { expiresIn: ACCESSTOKENLIFETIME }, // Define ACCESSTOKENLIFETIME
         );
 
         return reply.status(200).send({

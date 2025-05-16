@@ -1,6 +1,10 @@
 import cors from "@fastify/cors";
 import fastifyJwt from "@fastify/jwt";
+import fastifyCookie from "@fastify/cookie";
+import fastifyHelmet from "@fastify/helmet";
+import fastifyRateLimit from "@fastify/rate-limit";
 import fastifySwagger from "@fastify/swagger";
+import xss from "xss";
 import fastifySwaggerUi from "@fastify/swagger-ui";
 import dotenv from "dotenv";
 import Fastify from "fastify";
@@ -21,6 +25,41 @@ const SECRET = "SECRET";
 
 const fastify = Fastify({
   logger: true,
+});
+
+await fastify.register(fastifyCookie);
+await fastify.register(fastifyHelmet, {
+  contentSecurityPolicy: false,
+});
+await fastify.register(fastifyRateLimit, {
+  max: 100,
+  timeWindow: "1 minute",
+});
+
+// Sanitizing function to prevent XSS
+const sanitize = (data) => {
+  if (typeof data === "string") {
+    return xss(data); // Sanitize string inputs
+  } else if (typeof data === "object") {
+    for (const key in data) {
+      data[key] = sanitize(data[key]); // Recursively sanitize object keys and values
+    }
+    return data;
+  }
+  return data;
+};
+
+// Pre-validation hook to sanitize the request body, query, and params
+fastify.addHook("preValidation", async (request, reply) => {
+  if (request.body) {
+    request.body = sanitize(request.body);
+  }
+  if (request.query) {
+    request.query = sanitize(request.query);
+  }
+  if (request.params) {
+    request.params = sanitize(request.params);
+  }
 });
 
 await fastify.register(cors, {
@@ -68,7 +107,7 @@ fastify.register(
     apiV1Routes.register(summaryRoute, { prefix: "/summary" });
     apiV1Routes.register(adviceRoute, { prefix: "/advice" });
   },
-  { prefix: "/api/v1" }
+  { prefix: "/api/v1" },
 );
 
 const PORT = parseInt(process.env.PORT) || 3003;
